@@ -1,7 +1,8 @@
-import { AppShell } from "@/components/layout/app-shell"
-import { DocumentsList } from "@/components/documents/documents-list"
-import { Button } from "@/components/ui/button"
-import { Plus, Upload } from "lucide-react"
+import { AppShell } from "@/components/layout/app-shell";
+import { DocumentsList } from "@/components/documents/documents-list";
+import { DocumentUploadClient } from "@/components/documents/document-upload-client";
+import { Button } from "@/components/ui/button";
+import { Plus, Upload } from "lucide-react";
 
 export default function DocumentsPage() {
   return (
@@ -10,25 +11,19 @@ export default function DocumentsPage() {
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Documentos</h1>
-            <p className="text-muted-foreground">Gerencie seus arquivos e documentos.</p>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Documentos
+            </h1>
+            <p className="text-muted-foreground">
+              Gerencie seus arquivos e documentos.
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" className="gap-2">
-              <Upload className="h-4 w-4" />
-              Upload
-            </Button>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Novo Documento
-            </Button>
-          </div>
+          <DocumentUploadClient />
         </div>
 
         {/* Documents List */}
         <DocumentsList />
       </div>
     </AppShell>
-  )
+  );
 }
-

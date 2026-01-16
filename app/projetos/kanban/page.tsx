@@ -1,16 +1,29 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { AppShell } from "@/components/layout/app-shell"
-import { useStore } from "@/lib/store"
-import { KanbanBoard } from "@/components/kanban/kanban-board"
-import { Button } from "@/components/ui/button"
-import { Plus, Filter, SlidersHorizontal } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react";
+import { AppShell } from "@/components/layout/app-shell";
+import { useStore } from "@/lib/store";
+import { KanbanBoard } from "@/components/kanban/kanban-board";
+import { ColumnModal } from "@/components/kanban/column-modal";
+import { Button } from "@/components/ui/button";
+import { Plus, Filter, SlidersHorizontal } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function KanbanPage() {
-  const { projects } = useStore()
-  const [selectedProjectId, setSelectedProjectId] = useState<string>("all")
+  const { projects } = useStore();
+  const [selectedProjectId, setSelectedProjectId] = useState<string>("all");
+  const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
+
+  const handleSaveColumn = (columnData: { title: string; color: string }) => {
+    // Lógica de salvar coluna será tratada no KanbanBoard
+    setIsColumnModalOpen(false);
+  };
 
   return (
     <AppShell>
@@ -19,10 +32,15 @@ export default function KanbanPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Kanban</h1>
-            <p className="text-muted-foreground">Gerencie suas tarefas visualmente</p>
+            <p className="text-muted-foreground">
+              Gerencie suas tarefas visualmente
+            </p>
           </div>
           <div className="flex items-center gap-3">
-            <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+            <Select
+              value={selectedProjectId}
+              onValueChange={setSelectedProjectId}
+            >
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Selecionar projeto" />
               </SelectTrigger>
@@ -31,7 +49,10 @@ export default function KanbanPage() {
                 {projects.map((project) => (
                   <SelectItem key={project.id} value={project.id}>
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full" style={{ backgroundColor: project.color }} />
+                      <div
+                        className="h-2 w-2 rounded-full"
+                        style={{ backgroundColor: project.color }}
+                      />
                       {project.name}
                     </div>
                   </SelectItem>
@@ -44,16 +65,30 @@ export default function KanbanPage() {
             <Button variant="outline" size="icon">
               <SlidersHorizontal className="h-4 w-4" />
             </Button>
-            <Button className="gap-2">
+            <Button
+              className="gap-2"
+              onClick={() => setIsColumnModalOpen(true)}
+            >
               <Plus className="h-4 w-4" />
-              Nova Tarefa
+              Nova Coluna
             </Button>
           </div>
         </div>
 
         {/* Quadro Kanban */}
-        <KanbanBoard projectId={selectedProjectId === "all" ? undefined : selectedProjectId} />
+        <KanbanBoard
+          projectId={
+            selectedProjectId === "all" ? undefined : selectedProjectId
+          }
+        />
+
+        {/* Modal de Coluna */}
+        <ColumnModal
+          open={isColumnModalOpen}
+          onOpenChange={setIsColumnModalOpen}
+          onSave={handleSaveColumn}
+        />
       </div>
     </AppShell>
-  )
+  );
 }
