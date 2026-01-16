@@ -24,14 +24,17 @@ export function AppHeader() {
     "/projetos": "Projetos",
     "/projetos/kanban": "Kanban por Projeto",
     "/projetos/lista": "Lista de Projetos",
+    "/projetos/roadmap": "Roadmap de Projetos",
     "/projetos/agenda": "Agenda de Compromissos",
     "/estudos": "Estudos",
     "/estudos/cursos": "Meus Estudos",
+    "/estudos/roadmap": "Roadmap de Estudos",
     "/estudos/anotacoes": "Anotações",
     "/estudos/agenda": "Agenda",
     "/knowledge": "Base de Conhecimento",
     "/documentos": "Documentos",
     "/chat": "Chat com IA",
+    "/api-roadmap": "Roadmap da API",
     "/configuracoes": "Configurações",
   }
 
@@ -111,16 +114,18 @@ export function AppHeader() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="/diverse-avatars.png" />
-                <AvatarFallback>U</AvatarFallback>
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <div className="flex items-center gap-2 px-2 py-1.5">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="/diverse-avatars.png" />
-                <AvatarFallback>U</AvatarFallback>
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">Usuário</span>

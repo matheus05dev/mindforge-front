@@ -38,6 +38,10 @@ export const studiesService = {
   },
 
   // Sessions
+  getSessions: async (subjectId: number): Promise<StudySession[]> => {
+    return apiClient.get<StudySession[]>(API_ENDPOINTS.sessions(subjectId))
+  },
+
   createSession: async (
     subjectId: number,
     data: { startTime: string; durationMinutes: number; notes?: string },

@@ -4,6 +4,7 @@ import { Inter, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "sonner"
 import { StoreProvider } from "@/lib/store"
+import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
 const inter = Inter({
@@ -28,23 +29,25 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" className="dark">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`} suppressHydrationWarning>
-        <StoreProvider>
-          {children}
-          <Toaster
-            theme="dark"
-            position="bottom-right"
-            toastOptions={{
-              style: {
-                background: "oklch(0.13 0 0)",
-                border: "1px solid oklch(0.18 0 0)",
-                color: "oklch(0.87 0.01 264)",
-              },
-            }}
-          />
-          <Analytics />
-        </StoreProvider>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" themes={["light", "dark"]}>
+          <StoreProvider>
+            {children}
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                className: "toast",
+                style: {
+                  background: "var(--card)",
+                  border: "1px solid var(--border)",
+                  color: "var(--card-foreground)",
+                },
+              }}
+            />
+            <Analytics />
+          </StoreProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

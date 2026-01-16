@@ -47,6 +47,18 @@ export interface StudySession {
   documents?: Document[]
 }
 
+// Tipo para anotações independentes (se for criar endpoint)
+export interface StudyNote {
+  id: number
+  subjectId?: number
+  subjectName?: string
+  title: string
+  content: string
+  tags: string[]
+  createdAt: string
+  sessionId?: number
+}
+
 export interface KnowledgeItem {
   id: number
   title: string
@@ -93,4 +105,3 @@ export interface AIMessage {
 export type AIMode = "MENTOR" | "ANALYST" | "DEBUG_ASSISTANT" | "SOCRATIC_TUTOR"
 
 export type AIProvider = "gemini" | "groq" | null
-

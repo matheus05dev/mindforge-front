@@ -18,6 +18,7 @@ import {
   Kanban,
   FileText,
   Calendar,
+  Map,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -55,6 +56,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
         return [
           { title: "Visão Geral", href: "/estudos", icon: LayoutDashboard },
           { title: "Meus Estudos", href: "/estudos/cursos", icon: GraduationCap },
+          { title: "Roadmap", href: "/estudos/roadmap", icon: Map },
           { title: "Anotações", href: "/estudos/anotacoes", icon: FileText },
           { title: "Agenda de Estudos", href: "/estudos/agenda", icon: Calendar },
           { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen },
@@ -65,6 +67,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           { title: "Kanban Geral", href: "/kanban", icon: Kanban },
           { title: "Kanban por Projeto", href: "/projetos/kanban", icon: Kanban },
           { title: "Todos os Projetos", href: "/projetos/lista", icon: FolderKanban, badge: 3 },
+          { title: "Roadmap", href: "/projetos/roadmap", icon: Map },
           { title: "Agenda de Compromissos", href: "/projetos/agenda", icon: Calendar },
           { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen },
         ]
@@ -78,6 +81,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   const bottomNavItems = [
     { title: "Chat com IA", href: "/chat", icon: MessageSquare },
     { title: "Documentos", href: "/documentos", icon: FileText },
+    { title: "Roadmap API", href: "/api-roadmap", icon: Map },
     { title: "Configurações", href: "/configuracoes", icon: Settings },
   ]
 
