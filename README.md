@@ -1,30 +1,86 @@
-# MindForge Frontend Structure
+# MindForge - Seu Segundo Cérebro
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+Frontend do MindForge, uma aplicação para desenvolvedores e estudantes gerenciarem projetos, estudos e conhecimento com IA.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/matheus05nunes81-5475s-projects/v0-mind-forge-frontend-structure)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/q8LfIRhp5AM)
+## 🚀 Início Rápido
 
-## Overview
+### Instalação
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+```bash
+# Instalar dependências
+npm install
 
-## Deployment
+# Iniciar em desenvolvimento
+npm run dev
+```
 
-Your project is live at:
+### Configuração da API
 
-**[https://vercel.com/matheus05nunes81-5475s-projects/v0-mind-forge-frontend-structure](https://vercel.com/matheus05nunes81-5475s-projects/v0-mind-forge-frontend-structure)**
+1. Crie o arquivo `.env.local` na raiz do projeto:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
 
-## Build your app
+2. Inicie sua API backend na porta 8080
 
-Continue building your app on:
+3. Configure CORS na API para aceitar `http://localhost:3000`
 
-**[https://v0.app/chat/q8LfIRhp5AM](https://v0.app/chat/q8LfIRhp5AM)**
+📖 **Documentação completa:** Veja [docs/QUICK_START.md](./docs/QUICK_START.md)
 
-## How It Works
+## 📚 Documentação
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+### Integração com API
+- [🚀 Guia Rápido](./docs/QUICK_START.md) - Comece aqui!
+- [📡 Documentação Completa de Integração](./docs/API_INTEGRATION.md) - Tudo sobre conectar com a API
+- [📋 Especificação de Endpoints](./docs/API_ENDPOINTS_SPEC.md) - Detalhes de todos os endpoints
+- [🗺️ Roadmap da API](./lib/api/ROADMAP.md) - Status dos endpoints
+
+### Desenvolvimento
+- [📖 Documentação da API Client](./lib/api/README.md) - Como usar os serviços
+
+## 🎯 Funcionalidades
+
+- ✅ **Projetos** - Gerenciamento de projetos com milestones
+- ✅ **Estudos** - Subjects, sessions e progressão de níveis
+- ✅ **Base de Conhecimento** - Itens de conhecimento com tags
+- ✅ **Kanban** - Board de tarefas drag-and-drop
+- ✅ **Chat com IA** - Assistente inteligente para análise
+- ✅ **Roadmaps** - Visualização timeline e mindmap
+- ✅ **Temas** - Modo claro e escuro
+- ✅ **OAuth GitHub** - Integração para análise de repositórios
+
+## 🛠️ Tecnologias
+
+- **Next.js 16** - Framework React
+- **TypeScript** - Tipagem estática
+- **Tailwind CSS** - Estilização
+- **Radix UI** - Componentes acessíveis
+- **Recharts** - Gráficos e visualizações
+- **date-fns** - Manipulação de datas
+
+## 📦 Estrutura do Projeto
+
+```
+mindforge-front/
+├── app/                    # Páginas Next.js
+├── components/              # Componentes React
+│   ├── layout/             # Layout principal
+│   ├── projetos/           # Componentes de projetos
+│   ├── studies/            # Componentes de estudos
+│   └── ui/                 # Componentes UI base
+├── lib/
+│   ├── api/                # Cliente API
+│   │   ├── config.ts       # Configuração de endpoints
+│   │   ├── client.ts       # Cliente HTTP
+│   │   ├── types.ts        # Tipos TypeScript
+│   │   └── services/       # Serviços específicos
+│   └── store.tsx           # Estado global
+├── docs/                   # Documentação
+└── public/                 # Arquivos estáticos
+```
+
+## 🔗 Links Úteis
+
+- [Documentação de Integração](./docs/API_INTEGRATION.md)
+- [Especificação de Endpoints](./docs/API_ENDPOINTS_SPEC.md)
+- [Guia Rápido](./docs/QUICK_START.md)
