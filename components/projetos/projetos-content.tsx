@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useStore } from "@/lib/store"
-import { Plus, Search, Filter, FolderKanban, Calendar, CheckCircle2, MoreHorizontal, Archive } from "lucide-react"
+import { Plus, Search, Filter, FolderKanban, Calendar, CheckCircle2, MoreHorizontal, Archive, Github, Target } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const statusConfig = {
@@ -122,6 +122,24 @@ export function ProjetosContent() {
                     <div className="h-1.5 rounded-full bg-primary transition-all" style={{ width: `${progress}%` }} />
                   </div>
                 </div>
+
+                {/* GitHub e Milestones */}
+                {(project.githubRepo || (project.milestones && project.milestones.length > 0)) && (
+                  <div className="mt-3 flex items-center gap-3 text-xs">
+                    {project.githubRepo && (
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <Github className="h-3.5 w-3.5" />
+                        <span className="truncate max-w-[120px]">{project.githubRepo}</span>
+                      </div>
+                    )}
+                    {project.milestones && project.milestones.length > 0 && (
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <Target className="h-3.5 w-3.5" />
+                        <span>{project.milestones.length} marcos</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Estatísticas */}
                 <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">

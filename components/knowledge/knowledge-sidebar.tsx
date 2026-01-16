@@ -28,10 +28,32 @@ const categoryIcons: Record<string, typeof Code> = {
   Ferramentas: Wrench,
 }
 
-export function KnowledgeSidebar() {
+interface KnowledgeSidebarProps {
+  selectedCategory?: string | null
+  onCategoryChange?: (category: string | null) => void
+  searchQuery?: string
+  onSearchChange?: (query: string) => void
+}
+
+export function KnowledgeSidebar({
+  selectedCategory: externalSelectedCategory,
+  onCategoryChange,
+  searchQuery: externalSearchQuery,
+  onSearchChange,
+}: KnowledgeSidebarProps = {}) {
   const { knowledge } = useStore()
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState(externalSearchQuery || "")
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(externalSelectedCategory || null)
+
+  const handleCategoryChange = (category: string | null) => {
+    setSelectedCategory(category)
+    onCategoryChange?.(category)
+  }
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query)
+    onSearchChange?.(query)
+  }
 
   // Obter categorias únicas com contagem
   const categories = knowledge.reduce(
@@ -65,7 +87,7 @@ export function KnowledgeSidebar() {
         <Input
           placeholder="Buscar notas..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           className="pl-9"
         />
       </div>
@@ -77,7 +99,7 @@ export function KnowledgeSidebar() {
           <Button
             variant="ghost"
             className={cn("w-full justify-start gap-2 h-9", selectedCategory === null && "bg-primary/10 text-primary")}
-            onClick={() => setSelectedCategory(null)}
+            onClick={() => handleCategoryChange(null)}
           >
             <FolderOpen className="h-4 w-4" />
             <span>Todas as Notas</span>
@@ -90,11 +112,11 @@ export function KnowledgeSidebar() {
               <Button
                 key={category}
                 variant="ghost"
-                className={cn(
-                  "w-full justify-start gap-2 h-9",
-                  selectedCategory === category && "bg-primary/10 text-primary",
-                )}
-                onClick={() => setSelectedCategory(category)}
+                  className={cn(
+                    "w-full justify-start gap-2 h-9",
+                    selectedCategory === category && "bg-primary/10 text-primary",
+                  )}
+                onClick={() => handleCategoryChange(category)}
               >
                 <Icon className="h-4 w-4" />
                 <span>{category}</span>

@@ -46,24 +46,27 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
       case "geral":
         return [
           { title: "Dashboard", href: "/", icon: LayoutDashboard },
+          { title: "Kanban Geral", href: "/kanban", icon: Kanban },
           { title: "Projetos", href: "/projetos", icon: FolderKanban, badge: 3 },
           { title: "Estudos", href: "/estudos", icon: GraduationCap },
-          { title: "Base de Conhecimento", href: "/conhecimento", icon: BookOpen, badge: 6 },
+          { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen, badge: 6 },
         ]
       case "estudos":
         return [
           { title: "Visão Geral", href: "/estudos", icon: LayoutDashboard },
-          { title: "Meus Cursos", href: "/estudos/cursos", icon: GraduationCap },
+          { title: "Meus Estudos", href: "/estudos/cursos", icon: GraduationCap },
           { title: "Anotações", href: "/estudos/anotacoes", icon: FileText },
           { title: "Agenda de Estudos", href: "/estudos/agenda", icon: Calendar },
-          { title: "Base de Conhecimento", href: "/conhecimento", icon: BookOpen },
+          { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen },
         ]
       case "projetos":
         return [
           { title: "Visão Geral", href: "/projetos", icon: LayoutDashboard },
-          { title: "Kanban", href: "/projetos/kanban", icon: Kanban },
+          { title: "Kanban Geral", href: "/kanban", icon: Kanban },
+          { title: "Kanban por Projeto", href: "/projetos/kanban", icon: Kanban },
           { title: "Todos os Projetos", href: "/projetos/lista", icon: FolderKanban, badge: 3 },
-          { title: "Base de Conhecimento", href: "/conhecimento", icon: BookOpen },
+          { title: "Agenda de Compromissos", href: "/projetos/agenda", icon: Calendar },
+          { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen },
         ]
       default:
         return []
@@ -74,6 +77,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
 
   const bottomNavItems = [
     { title: "Chat com IA", href: "/chat", icon: MessageSquare },
+    { title: "Documentos", href: "/documentos", icon: FileText },
     { title: "Configurações", href: "/configuracoes", icon: Settings },
   ]
 

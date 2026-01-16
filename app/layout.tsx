@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "sonner"
+import { StoreProvider } from "@/lib/store"
 import "./globals.css"
 
 const inter = Inter({
@@ -28,20 +29,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className="dark">
-      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
-        {children}
-        <Toaster
-          theme="dark"
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: "oklch(0.13 0 0)",
-              border: "1px solid oklch(0.18 0 0)",
-              color: "oklch(0.87 0.01 264)",
-            },
-          }}
-        />
-        <Analytics />
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`} suppressHydrationWarning>
+        <StoreProvider>
+          {children}
+          <Toaster
+            theme="dark"
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: "oklch(0.13 0 0)",
+                border: "1px solid oklch(0.18 0 0)",
+                color: "oklch(0.87 0.01 264)",
+              },
+            }}
+          />
+          <Analytics />
+        </StoreProvider>
       </body>
     </html>
   )

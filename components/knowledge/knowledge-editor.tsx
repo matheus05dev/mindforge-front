@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 
 interface KnowledgeEditorProps {
-  item: KnowledgeItem
+  item?: KnowledgeItem
   onClose: () => void
 }
 
@@ -40,9 +40,10 @@ const categoryColors: Record<string, string> = {
 }
 
 export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
-  const [title, setTitle] = useState(item.title)
-  const [content, setContent] = useState(item.content)
+  const [title, setTitle] = useState(item?.title || "")
+  const [content, setContent] = useState(item?.content || "")
   const [isPreview, setIsPreview] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
   const toolbarButtons = [
     { icon: Heading1, label: "Heading 1", action: () => insertText("# ") },
@@ -109,17 +110,19 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
               onChange={(e) => setTitle(e.target.value)}
               className="text-xl font-semibold border-none p-0 h-auto focus-visible:ring-0 bg-transparent"
             />
-            <div className="flex items-center gap-2 mt-1">
-              <Badge variant="outline" className={cn("text-xs", categoryColors[item.category])}>
-                {item.category}
-              </Badge>
-              {item.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-xs gap-1">
-                  <Hash className="h-3 w-3" />
-                  {tag}
+            {item && (
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="outline" className={cn("text-xs", categoryColors[item.category])}>
+                  {item.category}
                 </Badge>
-              ))}
-            </div>
+                {item.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary" className="text-xs gap-1">
+                    <Hash className="h-3 w-3" />
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -130,9 +133,35 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
             <Sparkles className="h-4 w-4" />
             AI Assist
           </Button>
-          <Button size="sm" className="gap-2">
+          <Button
+            size="sm"
+            className="gap-2"
+            onClick={async () => {
+              if (!title.trim()) return
+              setIsSaving(true)
+              try {
+                const { knowledgeService } = await import("@/lib/api")
+                if (item) {
+                  await knowledgeService.update(item.id as any, { title, content, tags: item.tags })
+                } else {
+                  await knowledgeService.create({
+                    title,
+                    content,
+                    tags: [],
+                  })
+                }
+                onClose()
+              } catch (error) {
+                console.error("Erro ao salvar:", error)
+                alert("Erro ao salvar nota. Verifique se a API está rodando.")
+              } finally {
+                setIsSaving(false)
+              }
+            }}
+            disabled={isSaving || !title.trim()}
+          >
             <Save className="h-4 w-4" />
-            Save
+            {isSaving ? "Salvando..." : "Salvar"}
           </Button>
         </div>
       </div>

@@ -1,10 +1,12 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import type { ChatMessage } from "@/lib/types"
+import type { ChatMessage, AIPersona } from "@/lib/types"
 import { ChatSidebar } from "./chat-sidebar"
 import { ChatMessageBubble } from "./chat-message"
 import { ChatInput } from "./chat-input"
+import { PersonaSelector } from "./persona-selector"
+import { ContentTools } from "./content-tools"
 import { Sparkles } from "lucide-react"
 
 const initialMessages: ChatMessage[] = [
@@ -50,6 +52,7 @@ export function ChatInterface() {
   const [activeConversation, setActiveConversation] = useState(mockConversations[0])
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedPersona, setSelectedPersona] = useState<AIPersona>("geral")
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -71,17 +74,52 @@ export function ChatInterface() {
     setMessages((prev) => [...prev, userMessage])
     setIsLoading(true)
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Importar serviços de IA
+      const { aiService, getAIMode } = await import("@/lib/api")
+      const mode = getAIMode(selectedPersona)
+
+      // Chamar API real
+      const response = await aiService.analyzeGeneric({
+        question: content,
+        subjectId: null,
+        projectId: null,
+        provider: null,
+      })
+
       const aiResponse: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: response.id.toString(),
         role: "assistant",
-        content: generateMockResponse(content),
-        createdAt: new Date().toISOString(),
+        content: response.content,
+        persona: selectedPersona,
+        createdAt: response.createdAt,
       }
       setMessages((prev) => [...prev, aiResponse])
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error)
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Desculpe, ocorreu um erro ao processar sua mensagem. Verifique se a API está rodando e tente novamente.",
+        persona: selectedPersona,
+        createdAt: new Date().toISOString(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
+  }
+
+  const handleToolSelect = (tool: string) => {
+    const toolPrompts: Record<string, string> = {
+      summarize: "Por favor, resuma o seguinte texto:",
+      translate: "Traduza o seguinte texto para português:",
+      rewrite: "Reescreva e melhore o seguinte texto:",
+      ocr: "Extraia o texto da seguinte imagem:",
+    }
+    const prompt = toolPrompts[tool] || ""
+    // Aqui você pode abrir um modal ou inserir o prompt no input
+    console.log("Tool selected:", tool, prompt)
   }
 
   const handleNewChat = () => {
@@ -114,13 +152,19 @@ export function ChatInterface() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col rounded-lg border border-border bg-card overflow-hidden">
         {/* Chat Header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <div className="flex items-center gap-3">
           <div className="rounded-md bg-primary/10 p-2">
             <Sparkles className="h-5 w-5 text-primary" />
           </div>
           <div>
             <h2 className="font-semibold">{activeConversation.title}</h2>
-            <p className="text-xs text-muted-foreground">AI Assistant - GPT-4</p>
+              <p className="text-xs text-muted-foreground">AI Assistant - MindForge</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <PersonaSelector selectedPersona={selectedPersona} onPersonaChange={setSelectedPersona} />
+            <ContentTools onToolSelect={handleToolSelect} />
           </div>
         </div>
 
@@ -200,8 +244,33 @@ function TypingIndicator() {
   )
 }
 
-function generateMockResponse(input: string): string {
+function generateMockResponse(input: string, persona: AIPersona = "geral"): string {
   const lowerInput = input.toLowerCase()
+  
+  // Respostas específicas por persona
+  if (persona === "mentor") {
+    return `Como seu mentor, vou te guiar passo a passo:\n\n${generateMentorResponse(lowerInput)}`
+  }
+  
+  if (persona === "analista") {
+    return `Análise técnica detalhada:\n\n${generateAnalystResponse(lowerInput)}`
+  }
+  
+  if (persona === "tutor_socratico") {
+    return `Vamos aprender juntos! Antes de responder, deixe-me fazer algumas perguntas:\n\n${generateSocraticResponse(lowerInput)}`
+  }
+  
+  if (persona === "debug_assistant") {
+    return `Vou ajudar você a debugar isso. Vamos investigar:\n\n${generateDebugResponse(lowerInput)}`
+  }
+  
+  if (persona === "recrutador_tecnico") {
+    return `Como recrutador técnico, aqui está minha análise:\n\n${generateRecruiterResponse(lowerInput)}`
+  }
+  
+  if (persona === "planejador") {
+    return `Vamos criar um plano estratégico:\n\n${generatePlannerResponse(lowerInput)}`
+  }
 
   if (lowerInput.includes("typescript") || lowerInput.includes("study")) {
     return `Great question! Here's a suggested study plan for TypeScript:
@@ -280,4 +349,28 @@ Based on your workspace data, I can help you:
 3. **Suggest study resources** based on your learning goals
 
 What would you like to focus on?`
+}
+
+function generateMentorResponse(input: string): string {
+  return `Vamos começar do básico e construir conhecimento sólido. Primeiro, entenda os fundamentos, depois pratique e por fim aplique em projetos reais.`
+}
+
+function generateAnalystResponse(input: string): string {
+  return `Análise técnica:\n- Complexidade: O(n)\n- Padrões identificados: Strategy, Factory\n- Pontos de melhoria: Otimização de queries\n- Recomendações: Implementar cache`
+}
+
+function generateSocraticResponse(input: string): string {
+  return `1. O que você já sabe sobre isso?\n2. Qual é o problema específico que você está enfrentando?\n3. O que você tentou até agora?\n4. O que você acha que pode estar faltando?`
+}
+
+function generateDebugResponse(input: string): string {
+  return `Vamos debugar sistematicamente:\n1. Verificar logs de erro\n2. Testar casos isolados\n3. Verificar dependências\n4. Analisar stack trace\n5. Reproduzir o problema`
+}
+
+function generateRecruiterResponse(input: string): string {
+  return `Análise de carreira:\n- Pontos fortes: Experiência sólida em TypeScript\n- Áreas de crescimento: Arquitetura de sistemas\n- Sugestões: Destaque projetos open-source\n- Próximos passos: Certificações relevantes`
+}
+
+function generatePlannerResponse(input: string): string {
+  return `Plano estratégico:\n\n**Fase 1 (Semana 1-2):** Setup e fundamentos\n**Fase 2 (Semana 3-4):** Desenvolvimento core\n**Fase 3 (Semana 5-6):** Testes e otimização\n**Fase 4 (Semana 7-8):** Deploy e documentação`
 }

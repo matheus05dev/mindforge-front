@@ -17,6 +17,19 @@ export interface Project {
   description?: string
   status: "ativo" | "arquivado" | "concluido"
   color: string
+  githubRepo?: string
+  milestones?: Milestone[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Milestone {
+  id: string
+  projectId: string
+  title: string
+  description?: string
+  dueDate?: string
+  status: "pendente" | "em_progresso" | "concluido"
   createdAt: string
   updatedAt: string
 }
@@ -40,12 +53,31 @@ export interface Study {
   title: string
   description?: string
   category: string
+  subject?: Subject
   progress: number
   totalHours: number
   completedHours: number
   status: "em_andamento" | "concluido" | "pausado"
+  sessions?: StudySession[]
   createdAt: string
   updatedAt: string
+}
+
+export interface Subject {
+  id: string
+  name: string
+  description?: string
+  proficiencyLevel: "iniciante" | "basico" | "intermediario" | "avancado" | "especialista"
+  createdAt: string
+  updatedAt: string
+}
+
+export interface StudySession {
+  id: string
+  studyId: string
+  duration: number // em minutos
+  notes?: string
+  createdAt: string
 }
 
 export interface KnowledgeItem {
@@ -63,7 +95,29 @@ export interface ChatMessage {
   id: string
   role: "user" | "assistant"
   content: string
+  persona?: AIPersona
   createdAt: string
+}
+
+export type AIPersona =
+  | "mentor"
+  | "analista"
+  | "tutor_socratico"
+  | "debug_assistant"
+  | "recrutador_tecnico"
+  | "planejador"
+  | "geral"
+
+export interface Document {
+  id: string
+  workspaceId: string
+  name: string
+  type: "pdf" | "image" | "text" | "code" | "other"
+  url: string
+  size: number
+  tags: string[]
+  createdAt: string
+  updatedAt: string
 }
 
 export interface NavigationItem {

@@ -10,17 +10,25 @@ import { Search, Filter, LayoutGrid, List } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { KnowledgeItem } from "@/lib/types"
 
-export function KnowledgeList() {
+interface KnowledgeListProps {
+  selectedCategory?: string | null
+  searchQuery?: string
+}
+
+export function KnowledgeList({ selectedCategory, searchQuery: externalSearchQuery }: KnowledgeListProps = {}) {
   const { knowledge } = useStore()
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState(externalSearchQuery || "")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [selectedItem, setSelectedItem] = useState<KnowledgeItem | null>(null)
 
-  const filteredItems = knowledge.filter(
-    (item) =>
+  const filteredItems = knowledge.filter((item) => {
+    const matchesCategory = !selectedCategory || item.category === selectedCategory
+    const matchesSearch =
+      !searchQuery ||
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())),
-  )
+      item.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+    return matchesCategory && matchesSearch
+  })
 
   if (selectedItem) {
     return <KnowledgeEditor item={selectedItem} onClose={() => setSelectedItem(null)} />

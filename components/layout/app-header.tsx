@@ -20,14 +20,17 @@ export function AppHeader() {
 
   const pathTitles: Record<string, string> = {
     "/": "Dashboard",
+    "/kanban": "Kanban Geral",
     "/projetos": "Projetos",
-    "/projetos/kanban": "Kanban",
+    "/projetos/kanban": "Kanban por Projeto",
     "/projetos/lista": "Lista de Projetos",
+    "/projetos/agenda": "Agenda de Compromissos",
     "/estudos": "Estudos",
-    "/estudos/cursos": "Meus Cursos",
+    "/estudos/cursos": "Meus Estudos",
     "/estudos/anotacoes": "Anotações",
     "/estudos/agenda": "Agenda",
-    "/conhecimento": "Base de Conhecimento",
+    "/knowledge": "Base de Conhecimento",
+    "/documentos": "Documentos",
     "/chat": "Chat com IA",
     "/configuracoes": "Configurações",
   }

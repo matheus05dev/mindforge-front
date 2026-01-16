@@ -4,7 +4,7 @@ import { StudiesOverview } from "@/components/studies/studies-overview"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 
-export default function StudiesPage() {
+export default function EstudosPage() {
   return (
     <AppShell>
       <div className="space-y-6">
@@ -29,3 +29,4 @@ export default function StudiesPage() {
     </AppShell>
   )
 }
+

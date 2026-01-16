@@ -4,7 +4,7 @@ import type { Study } from "@/lib/types"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Clock, Play, MoreHorizontal, BookOpen } from "lucide-react"
+import { Clock, Play, MoreHorizontal, BookOpen, Target, TrendingUp } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +26,24 @@ const categoryColors: Record<string, string> = {
   Frontend: "bg-green-500/10 text-green-500 border-green-500/20",
   Database: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   Backend: "bg-red-500/10 text-red-500 border-red-500/20",
+  Programação: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  Arquitetura: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+}
+
+const proficiencyLabels: Record<string, string> = {
+  iniciante: "Iniciante",
+  basico: "Básico",
+  intermediario: "Intermediário",
+  avancado: "Avançado",
+  especialista: "Especialista",
+}
+
+const proficiencyColors: Record<string, string> = {
+  iniciante: "bg-gray-500/10 text-gray-500",
+  basico: "bg-blue-500/10 text-blue-500",
+  intermediario: "bg-yellow-500/10 text-yellow-500",
+  avancado: "bg-orange-500/10 text-orange-500",
+  especialista: "bg-purple-500/10 text-purple-500",
 }
 
 export function StudyCard({ study, variant = "grid" }: StudyCardProps) {
@@ -116,6 +134,25 @@ export function StudyCard({ study, variant = "grid" }: StudyCardProps) {
       <div className="mt-4">
         <h3 className="font-semibold group-hover:text-primary transition-colors">{study.title}</h3>
         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{study.description}</p>
+        
+        {/* Subject e Proficiência */}
+        {study.subject && (
+          <div className="mt-3 flex items-center gap-2 flex-wrap">
+            <Badge variant="outline" className="text-xs">
+              <Target className="h-3 w-3 mr-1" />
+              {study.subject.name}
+            </Badge>
+            <Badge variant="outline" className={cn("text-xs", proficiencyColors[study.subject.proficiencyLevel])}>
+              <TrendingUp className="h-3 w-3 mr-1" />
+              {proficiencyLabels[study.subject.proficiencyLevel]}
+            </Badge>
+            {study.sessions && study.sessions.length > 0 && (
+              <Badge variant="outline" className="text-xs">
+                {study.sessions.length} sessões
+              </Badge>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Progress */}
