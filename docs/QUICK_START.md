@@ -122,3 +122,4 @@ Se aparecer "✅ OK", está funcionando!
 
 O frontend usa dados mock quando a API não está disponível, então você pode desenvolver o frontend mesmo sem a API rodando. Quando a API estiver pronta, os dados reais serão carregados automaticamente.
 
+

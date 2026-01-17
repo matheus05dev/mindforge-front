@@ -708,3 +708,4 @@ Use este checklist para verificar se sua API está compatível:
 - [ ] IDs são números inteiros
 - [ ] Arrays vazios ao invés de null
 
+

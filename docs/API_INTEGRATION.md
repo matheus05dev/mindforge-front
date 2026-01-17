@@ -792,3 +792,4 @@ Se encontrar problemas:
 3. Teste os endpoints diretamente com `curl` ou Postman
 4. Compare os DTOs esperados com os retornados pela API
 
+

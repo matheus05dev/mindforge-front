@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 
 interface ChatInputProps {
-  onSend: (content: string) => void;
+  onSend: (content: string, files?: File[]) => void;
   isLoading: boolean;
 }
 
@@ -40,7 +40,10 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim() && !isLoading) {
-      onSend(input.trim());
+      onSend(
+        input.replace(/^\s+|\s+$/g, ""), // Remove only leading/trailing whitespace, preserve internal line breaks
+        selectedFiles.length > 0 ? selectedFiles : undefined
+      );
       setInput("");
       setSelectedFiles([]);
     }

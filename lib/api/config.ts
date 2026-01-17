@@ -1,4 +1,5 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 export const API_ENDPOINTS = {
   // Workspaces
@@ -19,7 +20,8 @@ export const API_ENDPOINTS = {
   subject: (id: number) => `/api/studies/subjects/${id}`,
 
   // Studies - Sessions
-  sessions: (subjectId: number) => `/api/studies/subjects/${subjectId}/sessions`,
+  sessions: (subjectId: number) =>
+    `/api/studies/subjects/${subjectId}/sessions`,
   session: (id: number) => `/api/studies/sessions/${id}`,
 
   // Knowledge
@@ -38,7 +40,8 @@ export const API_ENDPOINTS = {
 
   // Documents
   documentsUpload: "/api/documents/upload",
-  documentsDownload: (fileName: string) => `/api/documents/download/${fileName}`,
+  documentsDownload: (fileName: string) =>
+    `/api/documents/download/${fileName}`,
 
   // AI
   aiAnalyzeCode: "/api/ai/analyze/code",
@@ -50,8 +53,11 @@ export const API_ENDPOINTS = {
   aiReviewPortfolio: "/api/ai/review/portfolio",
   aiThinkProduct: "/api/ai/think/product",
 
+  // New AI Chat endpoints
+  aiChat: "/v1/ai/chat",
+  aiDocumentAnalyze: "/v1/ai/document/analyze",
+
   // Integrations
   githubConnect: "/api/integrations/github/connect",
   githubCallback: "/api/integrations/github/callback",
-} as const
-
+} as const;
