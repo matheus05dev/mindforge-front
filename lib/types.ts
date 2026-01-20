@@ -135,6 +135,7 @@ export interface ChatSession {
   title?: string;
   messages?: ChatMessage[];
   createdAt?: string;
+  documentId?: string;
 }
 
 export type Conversation = ChatSession;

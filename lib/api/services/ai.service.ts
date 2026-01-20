@@ -89,6 +89,7 @@ export const aiService = {
     provider?: string;
     model?: string;
     systemMessage?: string;
+    documentId?: string;
   }): Promise<any> => {
     return apiClient.post<any>(API_ENDPOINTS.aiChat, {
       chatId: data.chatId,
@@ -96,6 +97,7 @@ export const aiService = {
       provider: data.provider,
       model: data.model,
       systemMessage: data.systemMessage,
+      documentId: data.documentId,
     });
   },
 
@@ -135,5 +137,13 @@ export const aiService = {
 
   getSession: async (id: number): Promise<ChatSession> => {
     return apiClient.get<ChatSession>(API_ENDPOINTS.aiChatSessionById(id));
+  },
+
+  updateSessionTitle: async (id: number, title: string): Promise<ChatSession> => {
+    return apiClient.put<ChatSession>(API_ENDPOINTS.aiChatSessionById(id), { title });
+  },
+
+  deleteSession: async (id: number): Promise<void> => {
+    return apiClient.delete<void>(API_ENDPOINTS.aiChatSessionById(id));
   },
 };

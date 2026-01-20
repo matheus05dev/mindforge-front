@@ -53,7 +53,31 @@ export class ApiClient {
         return undefined as T
       }
 
-      return await response.json()
+      // Check if response has content before parsing JSON
+      const text = await response.text()
+      console.log(`>>> [API CLIENT] ${endpoint}`, {
+        status: response.status,
+        textLength: text?.length,
+        rawText: text
+      });
+
+      if (!text || text.trim() === '') {
+        throw {
+          message: 'Resposta vazia do servidor',
+          status: response.status,
+        }
+      }
+
+      try {
+        const json = JSON.parse(text)
+        return json
+      } catch (e) {
+        console.error('Failed to parse JSON response:', text)
+        throw {
+          message: 'Resposta inválida do servidor',
+          status: response.status,
+        } as ApiError
+      }
     } catch (error) {
       if (error && typeof error === "object" && "status" in error && "message" in error) {
         throw error
@@ -122,7 +146,24 @@ export class ApiClient {
       } as ApiError
     }
 
-    return await response.json()
+    // Check if response has content before parsing JSON
+    const text = await response.text()
+    if (!text || text.trim() === '') {
+      throw {
+        message: 'Resposta vazia do servidor após upload',
+        status: response.status,
+      } as ApiError
+    }
+
+    try {
+      return JSON.parse(text)
+    } catch (e) {
+      console.error('Failed to parse JSON response from upload:', text)
+      throw {
+        message: 'Resposta inválida do servidor após upload',
+        status: response.status,
+      } as ApiError
+    }
   }
 
   async download(endpoint: string, fileName: string): Promise<Blob> {

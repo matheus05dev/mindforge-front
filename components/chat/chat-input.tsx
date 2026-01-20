@@ -18,9 +18,10 @@ import {
 interface ChatInputProps {
   onSend: (content: string, files?: File[]) => void;
   isLoading: boolean;
+  placeholder?: string;
 }
 
-export function ChatInput({ onSend, isLoading }: ChatInputProps) {
+export function ChatInput({ onSend, isLoading, placeholder }: ChatInputProps) {
   const [input, setInput] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isFileDialogOpen, setIsFileDialogOpen] = useState(false);
@@ -86,8 +87,8 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask anything about your workspace..."
-              className="min-h-[48px] max-h-[200px] resize-none pr-24 bg-background"
+              placeholder={placeholder || "Pergunte qualquer coisa sobre seu espaço de trabalho..."}
+              className="flex-1 bg-transparent border-none focus:ring-0 resize-none max-h-[200px] min-h-[36px] py-2 text-sm"
               disabled={isLoading}
               rows={1}
             />
@@ -154,9 +155,9 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
           </div>
         )}
 
-        <p className="text-xs text-muted-foreground mt-2 text-center">
-          AI can make mistakes. Verify important information.
-        </p>
+        <p className="text-[10px] text-center text-muted-foreground mt-2">
+        A IA pode cometer erros. Verifique informações importantes.
+      </p>
       </form>
 
       {/* Dialog para selecionar arquivos */}

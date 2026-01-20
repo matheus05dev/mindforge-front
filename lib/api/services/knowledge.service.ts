@@ -26,5 +26,19 @@ export const knowledgeService = {
   searchByTag: async (tag: string): Promise<KnowledgeItem[]> => {
     return apiClient.get<KnowledgeItem[]>(API_ENDPOINTS.knowledgeSearch(tag))
   },
+
+  aiAssist: async (data: {
+    command: "CONTINUE" | "SUMMARIZE" | "FIX_GRAMMAR" | "IMPROVE" | "CUSTOM" | "ASK_AGENT"
+    context: string
+    instruction?: string
+    useContext?: boolean
+    knowledgeId?: number
+  }): Promise<{ result: string; success: boolean; message: string }> => {
+    return apiClient.post(API_ENDPOINTS.knowledgeAI, data)
+  },
+
+  getChatSession: async (knowledgeId: number): Promise<{ id: number; messages: any[] }> => {
+    return apiClient.get(API_ENDPOINTS.knowledgeChatSession(knowledgeId))
+  },
 }
 

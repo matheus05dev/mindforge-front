@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { ChevronRight, Bell, User, LogOut, Settings, HelpCircle } from "lucide-react"
+import { ChevronRight, Bell, User, LogOut, Settings, HelpCircle, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -16,7 +16,7 @@ import { useStore } from "@/lib/store"
 
 export function AppHeader() {
   const pathname = usePathname()
-  const { currentWorkspace } = useStore()
+  const { currentWorkspace, toggleAINotes } = useStore()
 
   const pathTitles: Record<string, string> = {
     "/": "Dashboard",
@@ -93,6 +93,11 @@ export function AppHeader() {
 
       {/* Ações do Lado Direito */}
       <div className="flex items-center gap-2">
+        {/* AI Notes Toggle */}
+        <Button variant="ghost" size="icon" onClick={toggleAINotes} title="MindForge AI Notes">
+            <Sparkles className="h-4 w-4 text-primary" />
+        </Button>
+
         {/* Notificações */}
         <Popover>
           <PopoverTrigger asChild>

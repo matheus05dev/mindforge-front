@@ -28,6 +28,8 @@ export const API_ENDPOINTS = {
   knowledge: "/api/knowledge",
   knowledgeItem: (id: number) => `/api/knowledge/${id}`,
   knowledgeSearch: (tag: string) => `/api/knowledge/search?tag=${tag}`,
+  knowledgeAI: "/api/v1/knowledge/ai/assist",
+  knowledgeChatSession: (id: number) => `/api/v1/knowledge/ai/${id}/session`,
 
   // Kanban
   kanbanBoard: "/api/kanban/board",

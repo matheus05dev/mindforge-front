@@ -48,6 +48,12 @@ interface StoreContextType {
   setKnowledgeItems: (items: KnowledgeItem[]) => void
   addKnowledge: (item: Omit<KnowledgeItem, "id" | "createdAt" | "updatedAt">) => void
   updateKnowledge: (id: string, updates: Partial<KnowledgeItem>) => void
+
+  // AI Notes
+  isAINotesOpen: boolean
+  toggleAINotes: () => void
+  aiContext: string | null
+  setAiContext: (context: string | null) => void
 }
 
 const StoreContext = createContext<StoreContextType | null>(null)
@@ -114,6 +120,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     )
   }, [])
 
+
+  // AI Notes Sidebar
+  const [isAINotesOpen, setIsAINotesOpen] = useState(false)
+  const toggleAINotes = useCallback(() => setIsAINotesOpen((prev) => !prev), [])
+
+  const [aiContext, setAiContext] = useState<string | null>(null)
+
   return (
     <StoreContext.Provider
       value={{
@@ -135,6 +148,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         setKnowledgeItems,
         addKnowledge,
         updateKnowledge,
+        isAINotesOpen,
+        toggleAINotes,
+        aiContext,
+        setAiContext,
       }}
     >
       {children}

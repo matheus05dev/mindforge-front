@@ -21,6 +21,8 @@ import {
   Heading1,
   Heading2,
   Sparkles,
+  CheckCircle2,
+  Bot,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
@@ -49,7 +51,7 @@ const categoryColors: Record<string, string> = {
 }
 
 export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
-  const { currentWorkspace, workspaces } = useStore()
+  const { currentWorkspace, workspaces, isAINotesOpen, toggleAINotes, setAiContext, setKnowledgeItems } = useStore()
   const [title, setTitle] = useState(item?.title || "")
   const [content, setContent] = useState(item?.content || "")
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>(
@@ -82,28 +84,20 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
     setContent((prev) => prev + `${wrapper}text${wrapper}`)
   }
 
-  // Simple markdown to HTML conversion for preview
   const renderMarkdown = (text: string) => {
     const html = text
-      // Headers
       .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
       .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold mt-6 mb-3">$1</h2>')
       .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-6 mb-4">$1</h1>')
-      // Code blocks
       .replace(
         /```(\w+)?\n([\s\S]*?)```/g,
         '<pre class="bg-muted rounded-md p-4 my-4 overflow-x-auto font-mono text-sm"><code>$2</code></pre>',
       )
-      // Inline code
       .replace(/`([^`]+)`/g, '<code class="bg-muted px-1.5 py-0.5 rounded text-sm font-mono">$1</code>')
-      // Bold
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      // Italic
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      // Lists
       .replace(/^\d+\. (.*$)/gim, '<li class="ml-4">$1</li>')
       .replace(/^- (.*$)/gim, '<li class="ml-4 list-disc">$1</li>')
-      // Line breaks
       .replace(/\n/g, "<br />")
 
     return html
@@ -155,10 +149,20 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
           <Button variant="outline" size="sm" onClick={() => setIsPreview(!isPreview)}>
             {isPreview ? "Edit" : "Preview"}
           </Button>
-          <Button variant="outline" size="sm" className="gap-2 bg-transparent">
+          
+          <Button
+            variant={isAINotesOpen ? "secondary" : "outline"}
+            size="sm"
+            className="gap-2 bg-transparent"
+            onClick={() => {
+                setAiContext(content)
+                if (!isAINotesOpen) toggleAINotes()
+            }}
+          >
             <Sparkles className="h-4 w-4" />
             AI Assist
           </Button>
+
           <Button
             size="sm"
             className="gap-2"
@@ -184,6 +188,16 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
                   })
                   toast.success("Nota criada com sucesso!")
                 }
+                
+                // Refresh the knowledge list
+                const updatedItems = await knowledgeService.getAll()
+                const mappedItems = updatedItems.map((apiItem: any) => ({
+                  ...apiItem,
+                  id: String(apiItem.id),
+                  workspaceId: apiItem.workspaceId ? String(apiItem.workspaceId) : currentWorkspace.id,
+                }))
+                setKnowledgeItems(mappedItems)
+                
                 onClose()
               } catch (error: any) {
                 console.error("Erro ao salvar:", error.message || error)
@@ -202,34 +216,37 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
 
       {/* Toolbar */}
       {!isPreview && (
-        <div className="flex items-center gap-1 py-2 border-b border-border">
+        <div className="flex items-center gap-1 py-1 border-b border-border px-2">
           {toolbarButtons.map((btn, idx) =>
             btn.type === "separator" ? (
               <Separator key={idx} orientation="vertical" className="h-6 mx-1" />
             ) : (
-              <Button key={idx} variant="ghost" size="icon" className="h-8 w-8" onClick={btn.action} title={btn.label}>
+              <Button key={idx} variant="ghost" size="icon" className="h-7 w-7" onClick={btn.action} title={btn.label}>
                 {btn.icon && <btn.icon className="h-4 w-4" />}
               </Button>
             ),
           )}
+          <div className="flex-1" />
         </div>
       )}
 
-      {/* Editor / Preview */}
-      <div className="flex-1 overflow-auto py-4">
-        {isPreview ? (
-          <div
-            className="prose prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
-          />
-        ) : (
-          <Textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="min-h-full resize-none border-none focus-visible:ring-0 font-mono text-sm leading-relaxed bg-transparent"
-            placeholder="Start writing in Markdown..."
-          />
-        )}
+      {/* Editor / Preview Layout */}
+      <div className="flex-1 overflow-hidden flex">
+          <div className="flex-1 overflow-auto py-4 px-6">
+            {isPreview ? (
+              <div
+                className="prose prose-invert max-w-none"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+              />
+            ) : (
+              <Textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="min-h-full resize-none border-none focus-visible:ring-0 font-mono text-sm leading-relaxed bg-transparent p-0"
+                placeholder="Start writing in Markdown..."
+              />
+            )}
+          </div>
       </div>
     </div>
   )
