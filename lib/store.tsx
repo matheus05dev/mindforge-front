@@ -6,9 +6,9 @@ import type { Workspace, Project, Task, Study, KnowledgeItem } from "./types"
 
 // Workspaces padrão
 const defaultWorkspaces: Workspace[] = [
-  { id: "geral", name: "Geral", type: "geral", icon: "🏠", description: "Visão geral de tudo" },
-  { id: "estudos", name: "Estudos", type: "estudos", icon: "📚", description: "Gestão de estudos e aprendizado" },
-  { id: "projetos", name: "Projetos", type: "projetos", icon: "🚀", description: "Gestão de projetos e tarefas" },
+  { id: "1", name: "Geral", type: "geral", icon: "🏠", description: "Visão geral de tudo" },
+  { id: "2", name: "Estudos", type: "estudos", icon: "📚", description: "Gestão de estudos e aprendizado" },
+  { id: "3", name: "Projetos", type: "projetos", icon: "🚀", description: "Gestão de projetos e tarefas" },
 ]
 
 // Dados iniciais
@@ -45,6 +45,7 @@ interface StoreContextType {
 
   // Knowledge
   knowledge: KnowledgeItem[]
+  setKnowledgeItems: (items: KnowledgeItem[]) => void
   addKnowledge: (item: Omit<KnowledgeItem, "id" | "createdAt" | "updatedAt">) => void
   updateKnowledge: (id: string, updates: Partial<KnowledgeItem>) => void
 }
@@ -58,6 +59,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
   const [studies, setStudies] = useState<Study[]>(initialStudies)
   const [knowledge, setKnowledge] = useState<KnowledgeItem[]>(initialKnowledge)
+
+  const setKnowledgeItems = useCallback((items: KnowledgeItem[]) => {
+    setKnowledge(items)
+  }, [])
 
   const addProject = useCallback((project: Omit<Project, "id" | "createdAt" | "updatedAt">) => {
     const now = new Date().toISOString()
@@ -127,6 +132,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         addStudy,
         updateStudy,
         knowledge,
+        setKnowledgeItems,
         addKnowledge,
         updateKnowledge,
       }}

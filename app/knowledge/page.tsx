@@ -1,7 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AppShell } from "@/components/layout/app-shell"
+import { useStore } from "@/lib/store"
+import { knowledgeService } from "@/lib/api"
 import { KnowledgeSidebar } from "@/components/knowledge/knowledge-sidebar"
 import { KnowledgeList } from "@/components/knowledge/knowledge-list"
 import { KnowledgeEditor } from "@/components/knowledge/knowledge-editor"
@@ -12,6 +14,31 @@ export default function KnowledgePage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [isCreating, setIsCreating] = useState(false)
+  const [editingItem, setEditingItem] = useState<any>(null)
+  const { setKnowledgeItems } = useStore()
+
+  useEffect(() => {
+    const fetchKnowledge = async () => {
+      try {
+        const items = await knowledgeService.getAll()
+        // Convert API types to Frontend types
+        const mappedItems = items.map((item) => ({
+          id: String(item.id),
+          workspaceId: item.workspaceId ? String(item.workspaceId) : "1", // Fallback para Geral (1)
+          title: item.title,
+          content: item.content,
+          tags: item.tags,
+          category: "Geral", // Default category or derive from tags
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }))
+        setKnowledgeItems(mappedItems)
+      } catch (error) {
+        console.error("Failed to fetch knowledge items:", error)
+      }
+    }
+    fetchKnowledge()
+  }, [setKnowledgeItems])
 
   return (
     <AppShell>
@@ -22,6 +49,7 @@ export default function KnowledgePage() {
           onCategoryChange={setSelectedCategory}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onSelectItem={setEditingItem}
         />
 
         {/* Main Content */}
@@ -32,17 +60,30 @@ export default function KnowledgePage() {
               <h1 className="text-2xl font-semibold tracking-tight">Base de Conhecimento</h1>
               <p className="text-muted-foreground">Sua wiki pessoal e coleção de notas.</p>
             </div>
-            <Button className="gap-2" onClick={() => setIsCreating(true)}>
+            <Button className="gap-2" onClick={() => {
+              setIsCreating(true)
+              setEditingItem(null)
+            }}>
               <Plus className="h-4 w-4" />
               Nova Nota
             </Button>
           </div>
 
           {/* Notes List */}
-          {isCreating ? (
-            <KnowledgeEditor onClose={() => setIsCreating(false)} />
+          {isCreating || editingItem ? (
+            <KnowledgeEditor 
+              item={editingItem} 
+              onClose={() => {
+                setIsCreating(false)
+                setEditingItem(null)
+              }} 
+            />
           ) : (
-            <KnowledgeList selectedCategory={selectedCategory} searchQuery={searchQuery} />
+            <KnowledgeList 
+              selectedCategory={selectedCategory} 
+              searchQuery={searchQuery} 
+              onSelectItem={setEditingItem}
+            />
           )}
         </div>
       </div>

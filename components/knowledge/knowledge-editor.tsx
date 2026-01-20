@@ -24,6 +24,15 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
+import { toast } from "sonner"
+import { useStore } from "@/lib/store"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface KnowledgeEditorProps {
   item?: KnowledgeItem
@@ -40,8 +49,12 @@ const categoryColors: Record<string, string> = {
 }
 
 export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
+  const { currentWorkspace, workspaces } = useStore()
   const [title, setTitle] = useState(item?.title || "")
   const [content, setContent] = useState(item?.content || "")
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>(
+    item?.workspaceId || currentWorkspace.id
+  )
   const [isPreview, setIsPreview] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -126,6 +139,19 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Select value={selectedWorkspaceId} onValueChange={setSelectedWorkspaceId}>
+            <SelectTrigger className="w-[140px] h-9">
+              <SelectValue placeholder="Workspace" />
+            </SelectTrigger>
+            <SelectContent>
+              {workspaces.map((ws) => (
+                <SelectItem key={ws.id} value={ws.id}>
+                  {ws.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <Button variant="outline" size="sm" onClick={() => setIsPreview(!isPreview)}>
             {isPreview ? "Edit" : "Preview"}
           </Button>
@@ -142,18 +168,26 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
               try {
                 const { knowledgeService } = await import("@/lib/api")
                 if (item) {
-                  await knowledgeService.update(item.id as any, { title, content, tags: item.tags })
+                  await knowledgeService.update(Number(item.id), {
+                    title,
+                    content,
+                    tags: item.tags || [],
+                    workspaceId: selectedWorkspaceId
+                  })
+                  toast.success("Nota atualizada com sucesso!")
                 } else {
                   await knowledgeService.create({
                     title,
                     content,
                     tags: [],
+                    workspaceId: selectedWorkspaceId
                   })
+                  toast.success("Nota criada com sucesso!")
                 }
                 onClose()
-              } catch (error) {
-                console.error("Erro ao salvar:", error)
-                alert("Erro ao salvar nota. Verifique se a API está rodando.")
+              } catch (error: any) {
+                console.error("Erro ao salvar:", error.message || error)
+                toast.error(`Erro ao salvar: ${error.message || "Verifique a conexão."}`)
               } finally {
                 setIsSaving(false)
               }

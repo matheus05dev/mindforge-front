@@ -128,11 +128,6 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
                     </div>
                   </DropdownMenuItem>
                 ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center gap-2 text-muted-foreground">
-                  <Plus className="h-4 w-4" />
-                  <span>Criar Workspace</span>
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}

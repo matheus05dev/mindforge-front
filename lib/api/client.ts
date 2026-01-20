@@ -31,14 +31,16 @@ export class ApiClient {
 
       if (!response.ok) {
         let errorData: any = {}
+        const text = await response.text()
         try {
-          const text = await response.text()
           if (text) {
             errorData = JSON.parse(text)
           }
-        } catch {
-          errorData = { message: response.statusText || "Erro na requisição" }
+        } catch (e) {
+          console.error("Failed to parse error response:", text)
+          errorData = { message: text || response.statusText || "Erro na requisição" }
         }
+        
         throw {
           message: errorData.message || errorData.error || response.statusText || "Erro na requisição",
           status: response.status,

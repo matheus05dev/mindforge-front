@@ -13,13 +13,13 @@ import type { KnowledgeItem } from "@/lib/types"
 interface KnowledgeListProps {
   selectedCategory?: string | null
   searchQuery?: string
+  onSelectItem: (item: KnowledgeItem) => void
 }
 
-export function KnowledgeList({ selectedCategory, searchQuery: externalSearchQuery }: KnowledgeListProps = {}) {
-  const { knowledge } = useStore()
+export function KnowledgeList({ selectedCategory, searchQuery: externalSearchQuery, onSelectItem }: KnowledgeListProps) {
+  const { knowledge, currentWorkspace } = useStore()
   const [searchQuery, setSearchQuery] = useState(externalSearchQuery || "")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [selectedItem, setSelectedItem] = useState<KnowledgeItem | null>(null)
 
   const filteredItems = knowledge.filter((item) => {
     const matchesCategory = !selectedCategory || item.category === selectedCategory
@@ -27,12 +27,9 @@ export function KnowledgeList({ selectedCategory, searchQuery: externalSearchQue
       !searchQuery ||
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+    
     return matchesCategory && matchesSearch
   })
-
-  if (selectedItem) {
-    return <KnowledgeEditor item={selectedItem} onClose={() => setSelectedItem(null)} />
-  }
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -67,13 +64,13 @@ export function KnowledgeList({ selectedCategory, searchQuery: externalSearchQue
         {viewMode === "grid" ? (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filteredItems.map((item) => (
-              <KnowledgeCard key={item.id} item={item} onClick={() => setSelectedItem(item)} />
+              <KnowledgeCard key={item.id} item={item} onClick={() => onSelectItem(item)} />
             ))}
           </div>
         ) : (
           <div className="space-y-2">
             {filteredItems.map((item) => (
-              <KnowledgeCard key={item.id} item={item} variant="list" onClick={() => setSelectedItem(item)} />
+              <KnowledgeCard key={item.id} item={item} variant="list" onClick={() => onSelectItem(item)} />
             ))}
           </div>
         )}

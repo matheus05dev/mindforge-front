@@ -33,6 +33,7 @@ interface KnowledgeSidebarProps {
   onCategoryChange?: (category: string | null) => void
   searchQuery?: string
   onSearchChange?: (query: string) => void
+  onSelectItem?: (item: any) => void
 }
 
 export function KnowledgeSidebar({
@@ -40,6 +41,7 @@ export function KnowledgeSidebar({
   onCategoryChange,
   searchQuery: externalSearchQuery,
   onSearchChange,
+  onSelectItem,
 }: KnowledgeSidebarProps = {}) {
   const { knowledge } = useStore()
   const [searchQuery, setSearchQuery] = useState(externalSearchQuery || "")
@@ -146,7 +148,12 @@ export function KnowledgeSidebar({
         <h3 className="text-xs font-semibold uppercase text-muted-foreground mb-3">Atualizados Recentemente</h3>
         <div className="space-y-1">
           {knowledge.slice(0, 4).map((item) => (
-            <Button key={item.id} variant="ghost" className="w-full justify-start gap-2 h-auto py-2 px-2 text-left">
+            <Button
+              key={item.id}
+              variant="ghost"
+              className="w-full justify-start gap-2 h-auto py-2 px-2 text-left"
+              onClick={() => onSelectItem?.(item)}
+            >
               <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />
               <span className="text-sm truncate">{item.title}</span>
             </Button>

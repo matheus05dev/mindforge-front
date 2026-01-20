@@ -11,11 +11,11 @@ export const knowledgeService = {
     return apiClient.get<KnowledgeItem>(API_ENDPOINTS.knowledgeItem(id))
   },
 
-  create: async (data: { title: string; content: string; tags: string[] }): Promise<KnowledgeItem> => {
+  create: async (data: { title: string; content: string; tags: string[]; workspaceId?: string }): Promise<KnowledgeItem> => {
     return apiClient.post<KnowledgeItem>(API_ENDPOINTS.knowledge, data)
   },
 
-  update: async (id: number, data: Partial<{ title: string; content: string; tags: string[] }>): Promise<KnowledgeItem> => {
+  update: async (id: number, data: Partial<{ title: string; content: string; tags: string[]; workspaceId?: string }>): Promise<KnowledgeItem> => {
     return apiClient.put<KnowledgeItem>(API_ENDPOINTS.knowledgeItem(id), data)
   },
 
