@@ -55,6 +55,8 @@ export const API_ENDPOINTS = {
 
   // New AI Chat endpoints
   aiChat: "/v1/ai/chat",
+  aiChatSession: "/v1/ai/chat/session",
+  aiChatSessionById: (id: number | string) => `/v1/ai/chat/${id}`,
   aiDocumentAnalyze: "/v1/ai/document/analyze",
 
   // Integrations

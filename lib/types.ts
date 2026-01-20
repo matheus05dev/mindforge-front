@@ -97,7 +97,7 @@ export interface KnowledgeItem {
 }
 
 export interface ChatMessage {
-  id: string;
+  id: string | number;
   role: "user" | "assistant";
   content: string;
   persona?: AIPersona;
@@ -129,6 +129,15 @@ export interface Document {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ChatSession {
+  id: number;
+  title?: string;
+  messages?: ChatMessage[];
+  createdAt?: string;
+}
+
+export type Conversation = ChatSession;
 
 export interface NavigationItem {
   title: string;

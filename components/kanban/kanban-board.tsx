@@ -19,65 +19,6 @@ const columns: { id: Task["status"]; title: string; color: string }[] = [
   { id: "concluido", title: "Concluído", color: "bg-green-500" },
 ];
 
-// Mock de tarefas para testes
-const mockTasks: Task[] = [
-  {
-    id: "1",
-    projectId: "1",
-    title: "Implementar autenticação",
-    description: "Adicionar sistema de login e autenticação",
-    status: "backlog",
-    priority: "alta",
-    tags: ["backend", "segurança"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    projectId: "1",
-    title: "Criar API REST",
-    description: "Desenvolver endpoints da API",
-    status: "a_fazer",
-    priority: "alta",
-    tags: ["backend", "api"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    projectId: "1",
-    title: "Validação de formulários",
-    description: "Implementar validações",
-    status: "a_fazer",
-    priority: "media",
-    tags: ["frontend"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "4",
-    projectId: "1",
-    title: "Testes unitários",
-    description: "Escrever testes para os componentes",
-    status: "em_progresso",
-    priority: "media",
-    tags: ["testes"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "5",
-    projectId: "1",
-    title: "Setup do projeto",
-    description: "Configurar ambiente de desenvolvimento",
-    status: "concluido",
-    priority: "alta",
-    tags: ["infra"],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
 export function KanbanBoard({ projectId }: KanbanBoardProps) {
   const {
     tasks: storeTasks,
@@ -93,8 +34,7 @@ export function KanbanBoard({ projectId }: KanbanBoardProps) {
     null
   );
 
-  // Usar mocks se não houver tarefas no store, caso contrário usar dados do store
-  const allTasks = storeTasks && storeTasks.length > 0 ? storeTasks : mockTasks;
+  const allTasks = storeTasks || [];
 
   // Filtrar tarefas por projeto se especificado
   const filteredTasks = projectId

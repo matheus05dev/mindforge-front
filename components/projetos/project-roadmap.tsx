@@ -42,15 +42,12 @@ export function ProjectRoadmap() {
         setLoading(true)
         let projectsData: Project[] = []
         
-        // Tentar carregar da API
+        // Carregar da API
         try {
           projectsData = await projectsService.getAll()
-          if (projectsData.length === 0) {
-            projectsData = getMockProjects()
-          }
         } catch (error) {
-          console.warn("Usando dados mock para visualização:", error)
-          projectsData = getMockProjects()
+          console.error("Erro ao carregar projetos:", error)
+          projectsData = []
         }
 
         // Carregar milestones de todos os projetos
@@ -60,12 +57,13 @@ export function ProjectRoadmap() {
             const milestones = await projectsService.getMilestones(project.id)
             projectsWithMilestones.push({
               project,
-              milestones: milestones.length > 0 ? milestones : getMockMilestones(project.id),
+              milestones,
             })
           } catch (error) {
+            console.error(`Erro ao carregar milestones do projeto ${project.id}:`, error)
             projectsWithMilestones.push({
               project,
-              milestones: getMockMilestones(project.id),
+              milestones: [],
             })
           }
         }
@@ -74,9 +72,8 @@ export function ProjectRoadmap() {
         setAllMilestones(projectsWithMilestones)
       } catch (error) {
         console.error("Erro ao carregar dados:", error)
-        const mockProjects = getMockProjects()
-        setProjects(mockProjects)
-        setAllMilestones(mockProjects.map(p => ({ project: p, milestones: getMockMilestones(p.id) })))
+        setProjects([])
+        setAllMilestones([])
       } finally {
         setLoading(false)
       }
@@ -84,65 +81,6 @@ export function ProjectRoadmap() {
     
     loadData()
   }, [mounted])
-
-  // Função para gerar mock data (só no cliente)
-  const getMockProjects = (): Project[] => {
-    if (typeof window === 'undefined') return []
-    return [
-      {
-        id: 1,
-        name: "API Backend",
-        description: "API RESTful para gerenciamento de projetos",
-        workspaceId: 1,
-        githubRepo: "github.com/user/api-backend",
-      },
-      {
-        id: 2,
-        name: "Frontend React",
-        description: "Interface web moderna com React e TypeScript",
-        workspaceId: 1,
-      },
-    ]
-  }
-
-  const getMockMilestones = (projectId: number): Milestone[] => {
-    if (typeof window === 'undefined') return []
-    const now = Date.now()
-    return [
-      {
-        id: projectId * 10 + 1,
-        projectId: projectId,
-        title: "Planejamento Inicial",
-        description: "Definição de requisitos e arquitetura do projeto",
-        dueDate: new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString(),
-        completed: true,
-      },
-      {
-        id: projectId * 10 + 2,
-        projectId: projectId,
-        title: "MVP - Versão Beta",
-        description: "Primeira versão funcional com features principais",
-        dueDate: new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        completed: true,
-      },
-      {
-        id: projectId * 10 + 3,
-        projectId: projectId,
-        title: "Testes e Correções",
-        description: "Correção de bugs e testes de integração",
-        dueDate: new Date(now).toISOString().split('T')[0],
-        completed: false,
-      },
-      {
-        id: projectId * 10 + 4,
-        projectId: projectId,
-        title: "Deploy em Produção",
-        description: "Lançamento oficial da aplicação",
-        dueDate: new Date(now + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        completed: false,
-      },
-    ]
-  }
 
   const getMilestoneStatus = (milestone: Milestone) => {
     if (milestone.completed) return "completed"

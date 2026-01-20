@@ -3,17 +3,6 @@
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
-const skillsData = [
-  { skill: "TypeScript", value: 18, fullMark: 20 },
-  { skill: "React", value: 16, fullMark: 20 },
-  { skill: "Node.js", value: 14, fullMark: 20 },
-  { skill: "Python", value: 12, fullMark: 20 },
-  { skill: "SQL", value: 15, fullMark: 20 },
-  { skill: "DevOps", value: 10, fullMark: 20 },
-  { skill: "System Design", value: 13, fullMark: 20 },
-  { skill: "Estrutura de Dados", value: 17, fullMark: 20 },
-]
-
 const chartConfig = {
   value: {
     label: "Nível",
@@ -22,6 +11,8 @@ const chartConfig = {
 }
 
 export function SkillsRadarChart() {
+  const skillsData: { skill: string; value: number; fullMark: number }[] = []
+
   return (
     <div className="rounded-lg border border-border bg-card p-6">
       <div className="mb-4">

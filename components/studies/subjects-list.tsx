@@ -30,75 +30,17 @@ const proficiencyColors: Record<string, string> = {
   ADVANCED: "bg-purple-500/10 text-purple-500",
 }
 
-// Dados mockados para visualização
-const mockSubjects: Subject[] = [
-  {
-    id: 1,
-    name: "Java",
-    description: "Programação orientada a objetos com Java",
-    proficiencyLevel: "INTERMEDIATE",
-    professionalLevel: "PLENO",
-    studySessions: [
-      {
-        id: 1,
-        subjectId: 1,
-        subjectName: "Java",
-        startTime: "2024-01-15T10:00:00",
-        durationMinutes: 120,
-        notes: "Estudei sobre streams e lambdas",
-      },
-      {
-        id: 2,
-        subjectId: 1,
-        subjectName: "Java",
-        startTime: "2024-01-16T14:00:00",
-        durationMinutes: 90,
-        notes: "Revisão de collections",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "TypeScript",
-    description: "TypeScript avançado e tipos complexos",
-    proficiencyLevel: "ADVANCED",
-    professionalLevel: "SENIOR",
-    studySessions: [
-      {
-        id: 3,
-        subjectId: 2,
-        subjectName: "TypeScript",
-        startTime: "2024-01-17T09:00:00",
-        durationMinutes: 150,
-        notes: "Generics e utility types",
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Docker",
-    description: "Containerização e orquestração",
-    proficiencyLevel: "BEGINNER",
-    professionalLevel: "JUNIOR",
-    studySessions: [],
-  },
-]
-
 export function SubjectsList() {
   const router = useRouter()
   const { data: apiSubjects, loading, error, execute } = useApi<Subject[]>()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingSubject, setEditingSubject] = useState<Subject | undefined>()
-  const [useMock] = useState(true) // Sempre usar mock por padrão
 
-  // Usar mock se ativado, senão usar dados da API
-  const subjects = useMock ? mockSubjects : apiSubjects
+  const subjects = apiSubjects || []
 
   const loadSubjects = useCallback(() => {
-    if (!useMock) {
-      execute(() => studiesService.getAllSubjects())
-    }
-  }, [execute, useMock])
+    execute(() => studiesService.getAllSubjects())
+  }, [execute])
 
   useEffect(() => {
     loadSubjects()
@@ -129,21 +71,16 @@ export function SubjectsList() {
     }
   }
 
-  if (loading && !useMock) {
+  if (loading) {
     return <div className="text-center py-12 text-muted-foreground">Carregando estudos...</div>
   }
 
-  if (error && !useMock) {
+  if (error) {
     const errorMessage = error?.message || "Erro desconhecido ao carregar estudos"
     return (
       <div className="text-center py-12">
         <p className="text-destructive mb-4">Erro ao carregar estudos: {errorMessage}</p>
-        <div className="flex gap-2 justify-center">
-          <Button onClick={loadSubjects}>Tentar novamente</Button>
-          <Button variant="outline" onClick={() => setUseMock(true)}>
-            Usar dados de exemplo
-          </Button>
-        </div>
+        <Button onClick={loadSubjects}>Tentar novamente</Button>
       </div>
     )
   }

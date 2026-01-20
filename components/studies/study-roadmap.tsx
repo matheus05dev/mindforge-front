@@ -31,7 +31,7 @@ export function StudyRoadmap() {
         let subjectsData: Subject[] = []
         let allSessions: StudySession[] = []
 
-        // Tentar carregar da API
+        // Carregar da API
         try {
           subjectsData = await studiesService.getAllSubjects()
           
@@ -49,22 +49,11 @@ export function StudyRoadmap() {
             }
           }
 
-          // Se não houver dados, usar mock
-          if (subjectsData.length === 0) {
-            subjectsData = getMockSubjects()
-          }
-
-          if (allSessions.length === 0) {
-            allSessions = getMockSessions()
-          }
-
           setSubjects(subjectsData)
         } catch (error) {
-          // Se der erro na API, usar mock
-          console.warn("Usando dados mock para visualização:", error)
-          subjectsData = getMockSubjects()
-          setSubjects(subjectsData)
-          allSessions = getMockSessions()
+          console.error("Erro ao carregar dados:", error)
+          setSubjects([])
+          allSessions = []
         }
 
         // Ordenar sessions por data
@@ -75,9 +64,8 @@ export function StudyRoadmap() {
         setSessions(sortedSessions)
       } catch (error) {
         console.error("Erro ao carregar dados:", error)
-        // Em caso de erro, usar mock
-        setSubjects(getMockSubjects())
-        setSessions(getMockSessions())
+        setSubjects([])
+        setSessions([])
       } finally {
         setLoading(false)
       }
@@ -85,95 +73,6 @@ export function StudyRoadmap() {
     
     loadData()
   }, [mounted])
-
-  // Função para gerar mock data (só no cliente)
-  const getMockSubjects = (): Subject[] => {
-    return [
-      {
-        id: 1,
-        name: "Java",
-        description: "Linguagem de programação orientada a objetos",
-        proficiencyLevel: "INTERMEDIATE",
-        professionalLevel: "PLENO",
-      },
-      {
-        id: 2,
-        name: "TypeScript",
-        description: "Superset do JavaScript com tipagem estática",
-        proficiencyLevel: "ADVANCED",
-        professionalLevel: "SENIOR",
-      },
-      {
-        id: 3,
-        name: "React",
-        description: "Biblioteca JavaScript para construção de interfaces",
-        proficiencyLevel: "INTERMEDIATE",
-        professionalLevel: "PLENO",
-      },
-      {
-        id: 4,
-        name: "Node.js",
-        description: "Runtime JavaScript para backend",
-        proficiencyLevel: "BEGINNER",
-        professionalLevel: "JUNIOR",
-      },
-    ]
-  }
-
-  const getMockSessions = (): StudySession[] => {
-    if (typeof window === 'undefined') return []
-    const now = Date.now()
-    return [
-      {
-        id: 1,
-        subjectId: 1,
-        subjectName: "Java",
-        startTime: new Date(now - 20 * 24 * 60 * 60 * 1000).toISOString(),
-        durationMinutes: 120,
-        notes: "Estudei Streams e Lambdas, conceitos fundamentais para programação funcional em Java.",
-      },
-      {
-        id: 2,
-        subjectId: 1,
-        subjectName: "Java",
-        startTime: new Date(now - 15 * 24 * 60 * 60 * 1000).toISOString(),
-        durationMinutes: 90,
-        notes: "Revisão de Collections: HashMap, ArrayList, e quando usar cada um.",
-      },
-      {
-        id: 3,
-        subjectId: 2,
-        subjectName: "TypeScript",
-        startTime: new Date(now - 10 * 24 * 60 * 60 * 1000).toISOString(),
-        durationMinutes: 150,
-        notes: "Aprofundei em Generics e Utility Types. Muito útil para criar tipos reutilizáveis.",
-      },
-      {
-        id: 4,
-        subjectId: 2,
-        subjectName: "TypeScript",
-        startTime: new Date(now - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        durationMinutes: 100,
-        notes: "Conditional Types - tipos que dependem de condições. Conceito avançado mas poderoso.",
-      },
-      {
-        id: 5,
-        subjectId: 3,
-        subjectName: "React",
-        startTime: new Date(now - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        durationMinutes: 180,
-        notes: "Hooks avançados: useMemo, useCallback, e custom hooks. Performance e otimização.",
-      },
-      {
-        id: 6,
-        subjectId: 4,
-        subjectName: "Node.js",
-        startTime: new Date(now - 1 * 24 * 60 * 60 * 1000).toISOString(),
-        durationMinutes: 120,
-        notes: "Primeira sessão sobre Node.js. Entendi o básico de módulos e NPM.",
-      },
-    ]
-  }
 
   const getProficiencyColor = (level: string) => {
     switch (level) {

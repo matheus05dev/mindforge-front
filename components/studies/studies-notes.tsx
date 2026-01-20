@@ -30,124 +30,18 @@ interface StudyNote {
   sessionId?: number
 }
 
-// Mock data para visualização
-const mockNotes: StudyNote[] = [
-  {
-    id: 1,
-    subjectId: 1,
-    subjectName: "Java",
-    title: "Streams e Lambdas",
-    content: `# Streams e Lambdas em Java
-
-## O que são Streams?
-Streams são uma abstração para processar coleções de forma funcional e declarativa.
-
-## Exemplos práticos:
-
-\`\`\`java
-List<String> names = Arrays.asList("João", "Maria", "Pedro");
-
-// Filtrar nomes que começam com 'J'
-List<String> filtered = names.stream()
-    .filter(name -> name.startsWith("J"))
-    .collect(Collectors.toList());
-\`\`\`
-
-## Lambdas
-Lambdas permitem escrever código mais conciso e funcional.`,
-    tags: ["java", "streams", "lambdas", "functional"],
-    createdAt: "2024-01-15T10:30:00",
-    sessionId: 1,
-  },
-  {
-    id: 2,
-    subjectId: 1,
-    subjectName: "Java",
-    title: "Collections: HashMap vs ArrayList",
-    content: `# Diferenças entre HashMap e ArrayList
-
-## HashMap
-- Estrutura de dados baseada em chave-valor
-- Acesso O(1) em média
-- Não mantém ordem de inserção (a menos que use LinkedHashMap)
-
-## ArrayList
-- Lista dinâmica baseada em array
-- Acesso O(1) por índice
-- Mantém ordem de inserção
-
-## Quando usar cada um?
-- **HashMap**: Quando precisa buscar por chave rapidamente
-- **ArrayList**: Quando precisa manter ordem e acessar por índice`,
-    tags: ["java", "collections", "hashmap", "arraylist"],
-    createdAt: "2024-01-16T14:15:00",
-    sessionId: 2,
-  },
-  {
-    id: 3,
-    subjectId: 2,
-    subjectName: "TypeScript",
-    title: "Generics e Utility Types",
-    content: `# TypeScript: Generics e Utility Types
-
-## Generics
-Permitem criar componentes reutilizáveis que funcionam com múltiplos tipos.
-
-\`\`\`typescript
-function identity<T>(arg: T): T {
-    return arg;
-}
-\`\`\`
-
-## Utility Types
-
-### Partial<T>
-Torna todas as propriedades opcionais.
-
-### Pick<T, K>
-Seleciona propriedades específicas de um tipo.
-
-### Omit<T, K>
-Remove propriedades específicas de um tipo.`,
-    tags: ["typescript", "generics", "utility-types", "advanced"],
-    createdAt: "2024-01-17T09:45:00",
-    sessionId: 3,
-  },
-  {
-    id: 4,
-    subjectId: 2,
-    subjectName: "TypeScript",
-    title: "Conditional Types",
-    content: `# Conditional Types em TypeScript
-
-Conditional types permitem criar tipos que dependem de condições.
-
-\`\`\`typescript
-type NonNullable<T> = T extends null | undefined ? never : T;
-
-type Example = NonNullable<string | null>; // string
-\`\`\`
-
-## Aplicações práticas
-- Criar tipos mais seguros
-- Inferir tipos baseados em condições
-- Criar utilitários de tipo avançados`,
-    tags: ["typescript", "conditional-types", "advanced"],
-    createdAt: "2024-01-18T11:20:00",
-  },
-]
-
 export function StudiesNotes() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [notes] = useState<StudyNote[]>([])
 
   // Coletar todas as tags únicas
-  const allTags = Array.from(new Set(mockNotes.flatMap((note) => note.tags)))
+  const allTags = Array.from(new Set(notes.flatMap((note) => note.tags)))
 
   // Filtrar notas
-  const filteredNotes = mockNotes.filter((note) => {
+  const filteredNotes = notes.filter((note) => {
     const matchesSearch =
       note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       note.content.toLowerCase().includes(searchQuery.toLowerCase()) ||

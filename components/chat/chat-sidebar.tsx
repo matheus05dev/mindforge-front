@@ -17,16 +17,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-
-interface Conversation {
-  id: string;
-  title: string;
-  createdAt: string;
-}
+import type { Conversation } from "@/lib/types";
 
 interface ChatSidebarProps {
   conversations: Conversation[];
-  activeConversation: Conversation;
+  activeConversation: Conversation | null;
   onNewChat: () => void;
   onSelectConversation: (conv: Conversation) => void;
 }
@@ -45,16 +40,19 @@ export function ChatSidebar({
     const today = new Date().toDateString();
     const yesterday = new Date(Date.now() - 86400000).toDateString();
 
-    const grouped = conversations.reduce((acc, conv) => {
-      const date = new Date(conv.createdAt).toDateString();
-      let group = "Older";
-      if (date === today) group = "Today";
-      else if (date === yesterday) group = "Yesterday";
+    const grouped = conversations.reduce(
+      (acc, conv) => {
+        const date = new Date(conv.createdAt).toDateString();
+        let group = "Mais antigas";
+        if (date === today) group = "Hoje";
+        else if (date === yesterday) group = "Ontem";
 
-      if (!acc[group]) acc[group] = [];
-      acc[group].push(conv);
-      return acc;
-    }, {} as Record<string, Conversation[]>);
+        if (!acc[group]) acc[group] = [];
+        acc[group].push(conv);
+        return acc;
+      },
+      {} as Record<string, Conversation[]>,
+    );
     setGroupedConversations(grouped);
   }, [conversations]);
 
@@ -64,7 +62,7 @@ export function ChatSidebar({
       <div className="p-3 border-b border-border">
         <Button onClick={onNewChat} className="w-full gap-2">
           <Plus className="h-4 w-4" />
-          New Chat
+          Nova Conversa
         </Button>
       </div>
 
@@ -72,7 +70,7 @@ export function ChatSidebar({
       <div className="p-3 border-b border-border">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Search chats..." className="pl-9 h-9" />
+          <Input placeholder="Buscar conversas..." className="pl-9 h-9" />
         </div>
       </div>
 
@@ -84,14 +82,14 @@ export function ChatSidebar({
               {group}
             </h3>
             <div className="space-y-1">
-              {convs.map((conv) => (
+              {convs.map((conv, index) => (
                 <div
-                  key={conv.id}
+                  key={`${conv.id}-${index}`}
                   className={cn(
                     "group flex items-center gap-2 rounded-md px-2 py-2 cursor-pointer transition-colors",
-                    activeConversation.id === conv.id
+                    activeConversation?.id === conv.id
                       ? "bg-primary/10 text-primary"
-                      : "hover:bg-accent/50 text-foreground"
+                      : "hover:bg-accent/50 text-foreground",
                   )}
                   onClick={() => onSelectConversation(conv)}
                 >
@@ -111,10 +109,10 @@ export function ChatSidebar({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>Rename</DropdownMenuItem>
+                      <DropdownMenuItem>Renomear</DropdownMenuItem>
                       <DropdownMenuItem className="text-destructive">
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        Excluir
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

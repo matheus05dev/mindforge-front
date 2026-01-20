@@ -13,96 +13,6 @@ import type {
 } from "@/lib/api/types";
 import type { Task } from "@/lib/types";
 
-// Mock de colunas para testes
-const mockColumns: KanbanColumnType[] = [
-  {
-    id: 1,
-    name: "Backlog",
-    position: 0,
-    tasks: [
-      {
-        id: 1,
-        title: "Implementar autenticação",
-        description: "Adicionar sistema de login e autenticação",
-        columnId: 1,
-        position: 0,
-        projectId: 1,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: 2,
-        title: "Criar API REST",
-        description: "Desenvolver endpoints da API",
-        columnId: 1,
-        position: 1,
-        projectId: 1,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 2,
-    name: "A Fazer",
-    position: 1,
-    tasks: [
-      {
-        id: 3,
-        title: "Validação de formulários",
-        description: "Implementar validações",
-        columnId: 2,
-        position: 0,
-        projectId: 1,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 3,
-    name: "Em Progresso",
-    position: 2,
-    tasks: [
-      {
-        id: 4,
-        title: "Testes unitários",
-        description: "Escrever testes para os componentes",
-        columnId: 3,
-        position: 0,
-        projectId: 1,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 4,
-    name: "Concluído",
-    position: 3,
-    tasks: [
-      {
-        id: 5,
-        title: "Setup do projeto",
-        description: "Configurar ambiente de desenvolvimento",
-        columnId: 4,
-        position: 0,
-        projectId: 1,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
 export function KanbanBoardGeneral() {
   const {
     data: columnsData,
@@ -110,7 +20,7 @@ export function KanbanBoardGeneral() {
     error,
     execute,
   } = useApi<KanbanColumnType[]>();
-  const [columns, setColumns] = useState<KanbanColumnType[]>(mockColumns);
+  const [columns, setColumns] = useState<KanbanColumnType[]>([]);
   const [editingTask, setEditingTask] = useState<KanbanTask | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedColumnId, setSelectedColumnId] = useState<number | null>(null);
@@ -127,9 +37,8 @@ export function KanbanBoardGeneral() {
           setColumns(data);
         }
       })
-      .catch(() => {
-        // Se houver erro, manter os mocks
-        console.log("Usando mocks de dados");
+      .catch((error) => {
+        console.error("Erro ao carregar board:", error);
       });
   }, [execute]);
 

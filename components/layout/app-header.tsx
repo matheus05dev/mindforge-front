@@ -34,7 +34,6 @@ export function AppHeader() {
     "/knowledge": "Base de Conhecimento",
     "/documentos": "Documentos",
     "/chat": "Chat com IA",
-    "/api-roadmap": "Roadmap da API",
     "/configuracoes": "Configurações",
   }
 
@@ -49,9 +48,27 @@ export function AppHeader() {
   ]
 
   const notifications = [
-    { id: 1, title: "Novo comentário no projeto API Backend", time: "5 min atrás" },
-    { id: 2, title: "Lembrete: Sessão de estudos às 15h", time: "1 hora atrás" },
-    { id: 3, title: "IA terminou de analisar suas notas", time: "2 horas atrás" },
+    {
+      id: 1,
+      title: "🚀 MindForge Versão 1.0",
+      description: "Esta é a versão oficial do MindForge.",
+      time: "Sistema",
+      href: null,
+    },
+    {
+      id: 2,
+      title: "📂 Repositório API Backend",
+      description: "Acesse o código fonte do servidor no GitHub.",
+      time: "GitHub",
+      href: "https://github.com/matheus05dev/mindforge-api",
+    },
+    {
+      id: 3,
+      title: "🎨 Repositório Frontend",
+      description: "Acesse o código fonte da interface no GitHub.",
+      time: "GitHub",
+      href: "https://github.com/matheus05dev/mindforge-front",
+    },
   ]
 
   return (
@@ -82,7 +99,7 @@ export function AppHeader() {
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-4 w-4" />
               <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-                3
+                {notifications.length}
               </span>
             </Button>
           </PopoverTrigger>
@@ -91,15 +108,25 @@ export function AppHeader() {
               <h4 className="font-semibold">Notificações</h4>
             </div>
             <div className="max-h-80 overflow-auto">
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="flex flex-col gap-1 border-b border-border px-4 py-3 last:border-0 hover:bg-accent/50 cursor-pointer"
-                >
-                  <span className="text-sm">{notification.title}</span>
-                  <span className="text-xs text-muted-foreground">{notification.time}</span>
-                </div>
-              ))}
+              {notifications.map((notification) => {
+                const Content = (
+                  <div className="flex flex-col gap-1 border-b border-border px-4 py-3 last:border-0 hover:bg-accent/50 cursor-pointer">
+                    <span className="text-sm font-medium">{notification.title}</span>
+                    <span className="text-xs text-muted-foreground">{notification.description}</span>
+                    <span className="text-[10px] text-primary/70">{notification.time}</span>
+                  </div>
+                )
+
+                if (notification.href) {
+                  return (
+                    <a key={notification.id} href={notification.href} target="_blank" rel="noopener noreferrer">
+                      {Content}
+                    </a>
+                  )
+                }
+
+                return <div key={notification.id}>{Content}</div>
+              })}
             </div>
             <div className="border-t border-border px-4 py-2">
               <Button variant="ghost" size="sm" className="w-full">

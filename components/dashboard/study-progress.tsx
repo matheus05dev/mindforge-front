@@ -10,17 +10,9 @@ const chartConfig = {
   },
 }
 
-const studyData = [
-  { day: "Seg", hours: 2.5 },
-  { day: "Ter", hours: 3.2 },
-  { day: "Qua", hours: 1.8 },
-  { day: "Qui", hours: 4.0 },
-  { day: "Sex", hours: 2.1 },
-  { day: "Sáb", hours: 5.5 },
-  { day: "Dom", hours: 3.8 },
-]
-
 export function StudyProgress() {
+  const studyData: { day: string; hours: number }[] = []
+
   return (
     <div className="rounded-lg border border-border bg-card p-6">
       <div className="mb-4 flex items-center justify-between">
@@ -29,8 +21,8 @@ export function StudyProgress() {
           <p className="text-sm text-muted-foreground">Horas de estudo semanais</p>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-semibold">22.9h</p>
-          <p className="text-xs text-green-500">+12% em relação à semana passada</p>
+          <p className="text-2xl font-semibold">0h</p>
+          <p className="text-xs text-muted-foreground">Esta semana</p>
         </div>
       </div>
       <ChartContainer config={chartConfig} className="h-[200px] w-full">

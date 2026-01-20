@@ -25,76 +25,19 @@ const proficiencyColors: Record<string, string> = {
   ADVANCED: "bg-purple-500/10 text-purple-500",
 }
 
-// Mock data para visualização
-const mockSubjects: Record<number, Subject> = {
-  1: {
-    id: 1,
-    name: "Java",
-    description: "Programação orientada a objetos com Java",
-    proficiencyLevel: "INTERMEDIATE",
-    professionalLevel: "PLENO",
-    studySessions: [
-      {
-        id: 1,
-        subjectId: 1,
-        subjectName: "Java",
-        startTime: "2024-01-15T10:00:00",
-        durationMinutes: 120,
-        notes: "Estudei sobre streams e lambdas. Aprendi como usar map, filter e reduce com streams.",
-      },
-      {
-        id: 2,
-        subjectId: 1,
-        subjectName: "Java",
-        startTime: "2024-01-16T14:00:00",
-        durationMinutes: 90,
-        notes: "Revisão de collections. Focando em HashMap, ArrayList e suas diferenças.",
-      },
-    ],
-  },
-  2: {
-    id: 2,
-    name: "TypeScript",
-    description: "TypeScript avançado e tipos complexos",
-    proficiencyLevel: "ADVANCED",
-    professionalLevel: "SENIOR",
-    studySessions: [
-      {
-        id: 3,
-        subjectId: 2,
-        subjectName: "TypeScript",
-        startTime: "2024-01-17T09:00:00",
-        durationMinutes: 150,
-        notes: "Generics e utility types. Aprofundando em Conditional Types e Mapped Types.",
-      },
-    ],
-  },
-  3: {
-    id: 3,
-    name: "Docker",
-    description: "Containerização e orquestração",
-    proficiencyLevel: "BEGINNER",
-    professionalLevel: "JUNIOR",
-    studySessions: [],
-  },
-}
-
 export default function StudyDetailPage() {
   const params = useParams()
   const router = useRouter()
   const studyId = Number(params.id)
   const { data: subject, loading, execute } = useApi<Subject>()
-  const [useMock] = useState(true)
 
   useEffect(() => {
-    if (!useMock) {
-      execute(() => studiesService.getSubjectById(studyId))
-    }
-  }, [studyId, execute, useMock])
+    execute(() => studiesService.getSubjectById(studyId))
+  }, [studyId, execute])
 
-  const currentSubject = useMock ? mockSubjects[studyId] : subject
+  const currentSubject = subject
 
-  if (loading && !useMock) {
+  if (loading) {
     return (
       <AppShell>
         <div className="text-center py-12 text-muted-foreground">Carregando estudo...</div>

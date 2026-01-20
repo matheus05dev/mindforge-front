@@ -11,44 +11,6 @@ interface Activity {
   time: string
 }
 
-const activities: Activity[] = [
-  {
-    id: "1",
-    type: "task",
-    title: "Concluiu Integração da API",
-    description: "API Backend - Módulo de autenticação",
-    time: "10 min atrás",
-  },
-  {
-    id: "2",
-    type: "study",
-    title: "Finalizou capítulo TypeScript",
-    description: "Generics Avançados - sessão de 2h",
-    time: "1 hora atrás",
-  },
-  {
-    id: "3",
-    type: "knowledge",
-    title: "Adicionou nova nota",
-    description: "Docker Best Practices",
-    time: "2 horas atrás",
-  },
-  {
-    id: "4",
-    type: "chat",
-    title: "Conversa com IA",
-    description: "Discutiu padrões de system design",
-    time: "3 horas atrás",
-  },
-  {
-    id: "5",
-    type: "project",
-    title: "Criou novo projeto",
-    description: "E-commerce Platform",
-    time: "5 horas atrás",
-  },
-]
-
 const iconMap = {
   project: FolderKanban,
   study: GraduationCap,
@@ -66,6 +28,8 @@ const colorMap = {
 }
 
 export function RecentActivity() {
+  const activities: Activity[] = []
+
   return (
     <div className="rounded-lg border border-border bg-card p-6">
       <div className="mb-4">

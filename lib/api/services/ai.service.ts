@@ -1,6 +1,12 @@
 import { apiClient } from "../client";
 import { API_ENDPOINTS } from "../config";
-import type { AIMessage, AIMode, AIProvider, KnowledgeItem } from "../types";
+import type {
+  AIMessage,
+  AIMode,
+  AIProvider,
+  KnowledgeItem,
+  ChatSession,
+} from "../types";
 
 export const aiService = {
   analyzeCode: async (data: {
@@ -47,21 +53,21 @@ export const aiService = {
 
   editKnowledgeItem: async (
     itemId: number,
-    instruction: string
+    instruction: string,
   ): Promise<KnowledgeItem> => {
     return apiClient.post<KnowledgeItem>(
       API_ENDPOINTS.aiEditKnowledge(itemId),
-      { instruction }
+      { instruction },
     );
   },
 
   transcribeDocument: async (
     documentId: number,
-    itemId: number
+    itemId: number,
   ): Promise<KnowledgeItem> => {
     return apiClient.post<KnowledgeItem>(
       API_ENDPOINTS.aiTranscribeDocument(documentId, itemId),
-      {}
+      {},
     );
   },
 
@@ -78,12 +84,14 @@ export const aiService = {
   },
 
   chat: async (data: {
+    chatId?: number;
     prompt: string;
     provider?: string;
     model?: string;
     systemMessage?: string;
   }): Promise<any> => {
     return apiClient.post<any>(API_ENDPOINTS.aiChat, {
+      chatId: data.chatId,
       prompt: data.prompt,
       provider: data.provider,
       model: data.model,
@@ -103,5 +111,29 @@ export const aiService = {
       formData.append("provider", data.provider);
     }
     return apiClient.upload<any>(API_ENDPOINTS.aiDocumentAnalyze, formData);
+  },
+
+  analyzeDocumentWithId: async (data: {
+    documentId: number;
+    prompt: string;
+    provider?: string;
+  }): Promise<any> => {
+    return aiService.analyzeGeneric({
+      question: data.prompt,
+      documentId: data.documentId,
+      provider: data.provider as AIProvider,
+    });
+  },
+
+  createSession: async (): Promise<ChatSession> => {
+    return apiClient.post<ChatSession>(API_ENDPOINTS.aiChatSession, {});
+  },
+
+  getAllSessions: async (): Promise<ChatSession[]> => {
+    return apiClient.get<ChatSession[]>(API_ENDPOINTS.aiChat);
+  },
+
+  getSession: async (id: number): Promise<ChatSession> => {
+    return apiClient.get<ChatSession>(API_ENDPOINTS.aiChatSessionById(id));
   },
 };

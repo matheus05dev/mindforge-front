@@ -5,24 +5,6 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { useStore } from "@/lib/store"
 import { Clock, Target, TrendingUp, BookOpen } from "lucide-react"
 
-const categoryProgress = [
-  { category: "Programação", progress: 75 },
-  { category: "Arquitetura", progress: 45 },
-  { category: "DevOps", progress: 30 },
-  { category: "Frontend", progress: 90 },
-  { category: "Database", progress: 60 },
-  { category: "Backend", progress: 20 },
-]
-
-const weeklyStudyData = [
-  { week: "Sem 1", hours: 12 },
-  { week: "Sem 2", hours: 18 },
-  { week: "Sem 3", hours: 15 },
-  { week: "Sem 4", hours: 22 },
-  { week: "Sem 5", hours: 20 },
-  { week: "Sem 6", hours: 25 },
-]
-
 const radarConfig = {
   progress: {
     label: "Progresso",
@@ -39,6 +21,8 @@ const lineConfig = {
 
 export function StudiesOverview() {
   const { studies } = useStore()
+  const categoryProgress: { category: string; progress: number }[] = []
+  const weeklyStudyData: { week: string; hours: number }[] = []
 
   const totalHours = studies.reduce((acc, study) => acc + study.completedHours, 0)
   const totalStudies = studies.length

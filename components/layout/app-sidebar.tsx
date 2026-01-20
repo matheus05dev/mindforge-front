@@ -48,9 +48,9 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
         return [
           { title: "Dashboard", href: "/", icon: LayoutDashboard },
           { title: "Kanban Geral", href: "/kanban", icon: Kanban },
-          { title: "Projetos", href: "/projetos", icon: FolderKanban, badge: 3 },
+          { title: "Projetos", href: "/projetos", icon: FolderKanban },
           { title: "Estudos", href: "/estudos", icon: GraduationCap },
-          { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen, badge: 6 },
+          { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen },
         ]
       case "estudos":
         return [
@@ -66,7 +66,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           { title: "Visão Geral", href: "/projetos", icon: LayoutDashboard },
           { title: "Kanban Geral", href: "/kanban", icon: Kanban },
           { title: "Kanban por Projeto", href: "/projetos/kanban", icon: Kanban },
-          { title: "Todos os Projetos", href: "/projetos/lista", icon: FolderKanban, badge: 3 },
+          { title: "Todos os Projetos", href: "/projetos/lista", icon: FolderKanban },
           { title: "Roadmap", href: "/projetos/roadmap", icon: Map },
           { title: "Agenda de Compromissos", href: "/projetos/agenda", icon: Calendar },
           { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen },
@@ -81,7 +81,6 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   const bottomNavItems = [
     { title: "Chat com IA", href: "/chat", icon: MessageSquare },
     { title: "Documentos", href: "/documentos", icon: FileText },
-    { title: "Roadmap API", href: "/api-roadmap", icon: Map },
     { title: "Configurações", href: "/configuracoes", icon: Settings },
   ]
 
@@ -179,17 +178,12 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
                 <Tooltip key={item.href}>
                   <TooltipTrigger asChild>
                     <Link href={item.href}>
-                      <Button
+                        <Button
                         variant={isActive ? "secondary" : "ghost"}
                         size="icon"
                         className={cn("relative h-10 w-10", isActive && "bg-primary/10 text-primary")}
                       >
                         <Icon className="h-4 w-4" />
-                        {item.badge && (
-                          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-                            {item.badge}
-                          </span>
-                        )}
                       </Button>
                     </Link>
                   </TooltipTrigger>
@@ -209,11 +203,6 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
                 >
                   <Icon className="h-4 w-4" />
                   <span>{item.title}</span>
-                  {item.badge && (
-                    <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary/20 px-1.5 text-xs font-medium text-primary">
-                      {item.badge}
-                    </span>
-                  )}
                 </Button>
               </Link>
             )

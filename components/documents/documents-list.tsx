@@ -14,42 +14,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import type { Document } from "@/lib/types"
 
-const mockDocuments: Document[] = [
-  {
-    id: "d1",
-    workspaceId: "geral",
-    name: "Arquitetura do Sistema.pdf",
-    type: "pdf",
-    url: "/documents/arquitetura.pdf",
-    size: 2048576,
-    tags: ["arquitetura", "documentação"],
-    createdAt: "2024-01-15T10:00:00Z",
-    updatedAt: "2024-01-20T14:30:00Z",
-  },
-  {
-    id: "d2",
-    workspaceId: "projetos",
-    name: "Diagrama de Fluxo.png",
-    type: "image",
-    url: "/documents/diagrama.png",
-    size: 512000,
-    tags: ["diagrama", "fluxo"],
-    createdAt: "2024-01-18T09:00:00Z",
-    updatedAt: "2024-01-18T09:00:00Z",
-  },
-  {
-    id: "d3",
-    workspaceId: "estudos",
-    name: "Exemplo de Código.ts",
-    type: "code",
-    url: "/documents/exemplo.ts",
-    size: 10240,
-    tags: ["typescript", "exemplo"],
-    createdAt: "2024-01-19T11:00:00Z",
-    updatedAt: "2024-01-19T11:00:00Z",
-  },
-]
-
 const typeIcons = {
   pdf: FileText,
   image: Image,
@@ -68,7 +32,7 @@ const typeColors = {
 
 export function DocumentsList() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [documents] = useState<Document[]>(mockDocuments)
+  const [documents] = useState<Document[]>([])
 
   const filteredDocuments = documents.filter(
     (doc) =>

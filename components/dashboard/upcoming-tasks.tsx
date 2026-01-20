@@ -13,38 +13,6 @@ interface Task {
   isOverdue?: boolean
 }
 
-const tasks: Task[] = [
-  {
-    id: "1",
-    title: "Completar módulo de autenticação",
-    project: "API Backend",
-    dueDate: "Hoje",
-    priority: "alta",
-  },
-  {
-    id: "2",
-    title: "Revisar PR #42",
-    project: "E-commerce",
-    dueDate: "Amanhã",
-    priority: "media",
-  },
-  {
-    id: "3",
-    title: "Design do schema do banco",
-    project: "Dashboard Analytics",
-    dueDate: "Em 2 dias",
-    priority: "baixa",
-  },
-  {
-    id: "4",
-    title: "Documentação da API",
-    project: "API Backend",
-    dueDate: "Ontem",
-    priority: "alta",
-    isOverdue: true,
-  },
-]
-
 const priorityColors = {
   alta: "bg-red-500/10 text-red-500 border-red-500/20",
   media: "bg-amber-500/10 text-amber-500 border-amber-500/20",
@@ -58,6 +26,8 @@ const priorityLabels = {
 }
 
 export function UpcomingTasks() {
+  const tasks: Task[] = []
+
   return (
     <div className="rounded-lg border border-border bg-card p-6">
       <div className="mb-4 flex items-center justify-between">
