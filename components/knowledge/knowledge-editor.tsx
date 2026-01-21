@@ -63,17 +63,17 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
   const [isPreview, setIsPreview] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [agentProposal, setAgentProposal] = useState<any>(null) // KnowledgeAgentProposal
-  // Local aiMode state removed in favor of global store
+  // Estado local de IA removido em favor da store global
   
-  // History & Diff State
+  // Estado de Histórico e Diff
   const [historyOpen, setHistoryOpen] = useState(false)
   const [selectedChangeIndices, setSelectedChangeIndices] = useState<Set<number>>(new Set())
   const [editedChangeContent, setEditedChangeContent] = useState<Map<number, string>>(new Map())
 
-  // New proposal handler
+  // Novo handler de proposta
   const handleProposalReceived = (proposal: any) => {
     setAgentProposal(proposal)
-    // Auto-select all changes by default
+    // Auto-seleciona todas as mudanças por padrão
     const allIndices = new Set<number>(proposal.changes.map((_: any, i: number) => i))
     setSelectedChangeIndices(allIndices)
     setEditedChangeContent(new Map())
@@ -96,7 +96,7 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
         modifiedContent: modifiedContentObj
       })
 
-      // Defensive check: backend might return array or object
+      // Verificação defensiva: backend pode retornar array ou objeto
       let newContent = ""
       if (Array.isArray(updated)) {
           newContent = updated[0]?.content || ""
@@ -104,10 +104,10 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
           newContent = (updated as any).content || ""
       }
 
-      // Update local content with the new content from backend
+      // Atualiza conteúdo local com o novo conteúdo do backend
       setContent(newContent)
       
-      // Force reset of proposal state to ensure UI dismisses the diff view
+      // Força reset do estado da proposta para garantir que a UI feche a visualização de diff
       setAgentProposal(null)
       setSelectedChangeIndices(new Set())
       setEditedChangeContent(new Map())
@@ -146,7 +146,7 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
     }
   }
 
-  // Toolbar actions
+  // Ações da Toolbar
   const insertText = (text: string) => {
     setContent((prev) => prev + text)
   }
@@ -172,7 +172,8 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
   ]
 
   const renderMarkdown = (text: string) => {
-    // Simple markdown render for preview
+    // Renderização markdown simples para preview
+    // Nota: Em produção, considerar usar 'react-markdown'
     const html = text
       .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
       .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold mt-6 mb-3">$1</h2>')
@@ -193,7 +194,7 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      {/* Header */}
+      {/* Cabeçalho */}
       <div className="flex items-center justify-between pb-4 border-b border-border shrink-0">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={onClose}>
@@ -216,9 +217,9 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
 
           <Separator orientation="vertical" className="h-6 mx-1" />
 
-          {/* AI Mode Toggle */}
+          {/* Toggle de Modo IA */}
           <Button 
-            variant={isAgentMode ? "default" : "outline"} 
+            variant={isAgentMode ? "default" : "outline"}
             size="sm" 
             className={cn("gap-2 transition-all", isAgentMode && "bg-purple-600 hover:bg-purple-700")}
             onClick={() => {
@@ -256,7 +257,7 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
                   toast.success("Nota criada com sucesso!")
                 }
                 
-                // Refresh the knowledge list
+                // Atualiza a lista de conhecimentos
                 const updatedItems = await knowledgeService.getAll()
                 const mappedItems = updatedItems.map((apiItem: any) => ({
                   id: String(apiItem.id),
@@ -286,7 +287,7 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
         </div>
       </div>
 
-      {/* Toolbar - Only show if not in diff mode */}
+      {/* Toolbar - Exibir apenas se não estiver em modo diff */}
       {!agentProposal && (
         <div className="flex items-center gap-1 py-2 border-b border-border overflow-x-auto">
           {toolbarButtons.map((btn, index) =>
@@ -372,7 +373,7 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
           )}
         </div>
 
-        {/* Unified Knowledge Chat Sidebar */}
+        {/* Sidebar Unificado de Chat da Base de Conhecimento */}
         {item && (
             <div className="h-full shrink-0">
                 <KnowledgeChatSidebar
@@ -385,7 +386,7 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
         )}
       </div>
       
-      {/* Version History Sidebar */}
+      {/* Sidebar de Histórico de Versões */}
       {item && (
         <KnowledgeVersionHistory 
           knowledgeId={Number(item.id)}

@@ -17,8 +17,8 @@ interface Message {
 interface KnowledgeChatSidebarProps {
   knowledgeId: number
   contextContent: string
-  onProposal?: (proposal: any) => void // Callback when agent generates a proposal
-  aiMode?: "AGENT" | "THINKING" // Current AI mode
+  onProposal?: (proposal: any) => void // Callback quando o agente gera uma proposta
+  aiMode?: "AGENT" | "THINKING" // Modo atual da IA
 }
 
 export function KnowledgeChatSidebar({ knowledgeId, contextContent, onProposal, aiMode = "THINKING" }: KnowledgeChatSidebarProps) {
@@ -35,7 +35,8 @@ export function KnowledgeChatSidebar({ knowledgeId, contextContent, onProposal, 
     if (!input.trim()) return
 
     const newMessage: Message = {
-      id: Date.now(), // temporary ID
+      // ID temporário
+      id: Date.now(),
       role: "user",
       content: input
     }
@@ -48,20 +49,20 @@ export function KnowledgeChatSidebar({ knowledgeId, contextContent, onProposal, 
       const { knowledgeService } = await import("@/lib/api")
       const response = await knowledgeService.aiAssist({
         command: "ASK_AGENT",
-        context: aiMode === "THINKING" ? contextContent : undefined, // Only send context in thinking mode
+        context: aiMode === "THINKING" ? contextContent : undefined, // Envia contexto apenas no modo pensando
         instruction: newMessage.content,
         useContext: true,
         knowledgeId: knowledgeId,
-        agentMode: aiMode === "AGENT" // Enable agent mode if in AGENT mode
+        agentMode: aiMode === "AGENT" // Ativa modo agente se estiver em AGENT mode
       })
 
       if (response.success) {
-        // Check if response contains a proposal (agent mode)
+        // Verifica se a resposta contém uma proposta (modo agente)
         if (response.proposal && onProposal) {
           onProposal(response.proposal)
           toast.success("Proposta gerada! Revise as mudanças no painel lateral.")
         } else if (response.result) {
-          // Regular thinking mode response
+          // Resposta normal do modo pensamento
           const aiMessage: Message = {
               id: Date.now() + 1,
               role: "assistant",

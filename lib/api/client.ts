@@ -53,7 +53,7 @@ export class ApiClient {
         return undefined as T
       }
 
-      // Check if response has content before parsing JSON
+      // Verifica se a resposta tem conteúdo antes de fazer o parse JSON
       const text = await response.text()
       console.log(`>>> [API CLIENT] ${endpoint}`, {
         status: response.status,
@@ -146,7 +146,7 @@ export class ApiClient {
       } as ApiError
     }
 
-    // Check if response has content before parsing JSON
+    // Verifica se a resposta tem conteúdo antes de fazer o parse JSON
     const text = await response.text()
     if (!text || text.trim() === '') {
       throw {

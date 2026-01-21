@@ -41,11 +41,11 @@ export const knowledgeService = {
 
   aiAssist: async (data: {
     command: "CONTINUE" | "SUMMARIZE" | "FIX_GRAMMAR" | "IMPROVE" | "CUSTOM" | "ASK_AGENT" | "AGENT_UPDATE"
-    context?: string // Optional for agent mode
+    context?: string // Opcional para modo agente
     instruction?: string
     useContext?: boolean
     knowledgeId?: number
-    agentMode?: boolean // Enable agent mode
+    agentMode?: boolean // Habilita modo agente
   }): Promise<{ 
     result?: string
     proposal?: any // KnowledgeAgentProposal
@@ -68,7 +68,7 @@ export const knowledgeService = {
     return apiClient.post(`/api/v1/knowledge/ai/proposals/${proposalId}/apply`, approval)
   },
 
-  // Version Management
+  // Gerenciamento de Versões
   getVersions: async (knowledgeId: number): Promise<KnowledgeVersion[]> => {
     return apiClient.get<KnowledgeVersion[]>(`/api/knowledge/${knowledgeId}/versions`)
   },
