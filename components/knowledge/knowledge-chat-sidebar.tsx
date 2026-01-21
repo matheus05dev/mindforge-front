@@ -1,10 +1,9 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import { Send, Bot, User, Loader2, RefreshCw } from "lucide-react"
+import { Send, Bot, User, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -18,33 +17,19 @@ interface Message {
 interface KnowledgeChatSidebarProps {
   knowledgeId: number
   contextContent: string
+  onProposal?: (proposal: any) => void // Callback when agent generates a proposal
+  aiMode?: "AGENT" | "THINKING" // Current AI mode
 }
 
-export function KnowledgeChatSidebar({ knowledgeId, contextContent }: KnowledgeChatSidebarProps) {
+export function KnowledgeChatSidebar({ knowledgeId, contextContent, onProposal, aiMode = "THINKING" }: KnowledgeChatSidebarProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    loadChatHistory()
-  }, [knowledgeId])
-
-  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
-
-  const loadChatHistory = async () => {
-    try {
-      const { knowledgeService } = await import("@/lib/api")
-      const session = await knowledgeService.getChatSession(knowledgeId)
-      if (session && session.messages) {
-        setMessages(session.messages)
-      }
-    } catch (error) {
-      console.error("Failed to load chat history", error)
-    }
-  }
 
   const handleSend = async () => {
     if (!input.trim()) return
@@ -63,19 +48,27 @@ export function KnowledgeChatSidebar({ knowledgeId, contextContent }: KnowledgeC
       const { knowledgeService } = await import("@/lib/api")
       const response = await knowledgeService.aiAssist({
         command: "ASK_AGENT",
-        context: contextContent,
+        context: aiMode === "THINKING" ? contextContent : undefined, // Only send context in thinking mode
         instruction: newMessage.content,
         useContext: true,
-        knowledgeId: knowledgeId
+        knowledgeId: knowledgeId,
+        agentMode: aiMode === "AGENT" // Enable agent mode if in AGENT mode
       })
 
       if (response.success) {
-        const aiMessage: Message = {
-            id: Date.now() + 1,
-            role: "assistant",
-            content: response.result
+        // Check if response contains a proposal (agent mode)
+        if (response.proposal && onProposal) {
+          onProposal(response.proposal)
+          toast.success("Proposta gerada! Revise as mudanças no painel lateral.")
+        } else if (response.result) {
+          // Regular thinking mode response
+          const aiMessage: Message = {
+              id: Date.now() + 1,
+              role: "assistant",
+              content: response.result
+          }
+          setMessages(prev => [...prev, aiMessage])
         }
-        setMessages(prev => [...prev, aiMessage])
       } else {
         toast.error("Erro no agente: " + response.message)
       }
@@ -93,12 +86,9 @@ export function KnowledgeChatSidebar({ knowledgeId, contextContent }: KnowledgeC
            <Bot className="h-4 w-4" />
            <span className="font-semibold text-sm">Chat com Agente</span>
         </div>
-        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={loadChatHistory}>
-            <RefreshCw className="h-3 w-3" />
-        </Button>
       </div>
 
-      <ScrollArea className="flex-1 p-4">
+      <div className="flex-1 overflow-y-auto p-4 min-h-0">
         <div className="space-y-4">
            {messages.length === 0 && (
                <div className="text-center text-muted-foreground text-sm py-8">
@@ -126,7 +116,7 @@ export function KnowledgeChatSidebar({ knowledgeId, contextContent }: KnowledgeC
            )}
            <div ref={bottomRef} />
         </div>
-      </ScrollArea>
+      </div>
 
       <div className="p-3 border-t">
         <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-2">

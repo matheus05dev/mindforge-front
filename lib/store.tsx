@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, useCallback } from "react"
+import { createContext, useContext, useState, useCallback, useEffect } from "react"
 import type { Workspace, Project, Task, Study, KnowledgeItem } from "./types"
 
 // Workspaces padrão
@@ -54,6 +54,10 @@ interface StoreContextType {
   toggleAINotes: () => void
   aiContext: string | null
   setAiContext: (context: string | null) => void
+
+  // Agent Mode
+  isAgentMode: boolean
+  toggleAgentMode: () => void
 }
 
 const StoreContext = createContext<StoreContextType | null>(null)
@@ -127,6 +131,22 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const [aiContext, setAiContext] = useState<string | null>(null)
 
+  // Agent Mode
+  const [isAgentMode, setIsAgentMode] = useState(false)
+  const toggleAgentMode = useCallback(() => setIsAgentMode((prev) => {
+    const newValue = !prev
+    localStorage.setItem("mindforge_agent_mode", String(newValue))
+    return newValue
+  }), [])
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem("mindforge_agent_mode")
+    if (stored !== null) {
+      setIsAgentMode(stored === "true")
+    }
+  }, [])
+
   return (
     <StoreContext.Provider
       value={{
@@ -152,6 +172,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         toggleAINotes,
         aiContext,
         setAiContext,
+        isAgentMode,
+        toggleAgentMode,
       }}
     >
       {children}

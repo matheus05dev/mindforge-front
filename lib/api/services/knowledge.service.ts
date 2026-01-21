@@ -2,6 +2,18 @@ import { apiClient } from "../client"
 import { API_ENDPOINTS } from "../config"
 import type { KnowledgeItem } from "../types"
 
+export interface KnowledgeVersion {
+  id: number
+  knowledgeItemId: number
+  title: string
+  contentPreview: string
+  fullContent?: string
+  createdAt: string
+  changeType: "MANUAL_EDIT" | "AGENT_PROPOSAL" | "ROLLBACK" | "INITIAL_VERSION"
+  changeSummary: string
+  proposalId?: string
+}
+
 export const knowledgeService = {
   getAll: async (): Promise<KnowledgeItem[]> => {
     return apiClient.get<KnowledgeItem[]>(API_ENDPOINTS.knowledge)
@@ -28,17 +40,44 @@ export const knowledgeService = {
   },
 
   aiAssist: async (data: {
-    command: "CONTINUE" | "SUMMARIZE" | "FIX_GRAMMAR" | "IMPROVE" | "CUSTOM" | "ASK_AGENT"
-    context: string
+    command: "CONTINUE" | "SUMMARIZE" | "FIX_GRAMMAR" | "IMPROVE" | "CUSTOM" | "ASK_AGENT" | "AGENT_UPDATE"
+    context?: string // Optional for agent mode
     instruction?: string
     useContext?: boolean
     knowledgeId?: number
-  }): Promise<{ result: string; success: boolean; message: string }> => {
+    agentMode?: boolean // Enable agent mode
+  }): Promise<{ 
+    result?: string
+    proposal?: any // KnowledgeAgentProposal
+    success: boolean
+    message: string 
+  }> => {
     return apiClient.post(API_ENDPOINTS.knowledgeAI, data)
   },
 
   getChatSession: async (knowledgeId: number): Promise<{ id: number; messages: any[] }> => {
     return apiClient.get(API_ENDPOINTS.knowledgeChatSession(knowledgeId))
   },
-}
 
+  applyProposal: async (proposalId: string, approval: {
+    approvedChangeIndices: number[]
+    approveAll: boolean
+    userComment?: string
+    modifiedContent?: Record<number, string>
+  }): Promise<KnowledgeItem> => {
+    return apiClient.post(`/api/v1/knowledge/ai/proposals/${proposalId}/apply`, approval)
+  },
+
+  // Version Management
+  getVersions: async (knowledgeId: number): Promise<KnowledgeVersion[]> => {
+    return apiClient.get<KnowledgeVersion[]>(`/api/knowledge/${knowledgeId}/versions`)
+  },
+
+  getVersion: async (knowledgeId: number, versionId: number): Promise<KnowledgeVersion> => {
+    return apiClient.get<KnowledgeVersion>(`/api/knowledge/${knowledgeId}/versions/${versionId}`)
+  },
+
+  rollbackToVersion: async (knowledgeId: number, versionId: number): Promise<KnowledgeItem> => {
+    return apiClient.post<KnowledgeItem>(`/api/knowledge/${knowledgeId}/versions/${versionId}/rollback`, {})
+  }
+}

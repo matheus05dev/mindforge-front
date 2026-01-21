@@ -15,7 +15,7 @@ export default function KnowledgePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isCreating, setIsCreating] = useState(false)
   const [editingItem, setEditingItem] = useState<any>(null)
-  const { setKnowledgeItems } = useStore()
+  const { setKnowledgeItems, isAgentMode } = useStore()
 
   useEffect(() => {
     const fetchKnowledge = async () => {
@@ -57,8 +57,8 @@ export default function KnowledgePage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight">Base de Conhecimento</h1>
-              <p className="text-muted-foreground">Sua wiki pessoal e coleção de notas.</p>
+              <h1 className="text-2xl font-semibold tracking-tight">{isAgentMode ? "Memória do Agente" : "Base de Conhecimento"}</h1>
+              <p className="text-muted-foreground">{isAgentMode ? "Gerencie a memória e contexto do agente IA." : "Sua wiki pessoal e coleção de notas."}</p>
             </div>
             <Button className="gap-2" onClick={() => {
               setIsCreating(true)

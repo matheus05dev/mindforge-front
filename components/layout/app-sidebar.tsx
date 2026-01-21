@@ -39,10 +39,12 @@ interface AppSidebarProps {
 
 export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
   const pathname = usePathname()
-  const { workspaces, currentWorkspace, setCurrentWorkspace } = useStore()
+  const { workspaces, currentWorkspace, setCurrentWorkspace, isAgentMode } = useStore()
 
   // Navegação baseada na workspace atual
   const getNavItems = () => {
+    const knowledgeTitle = isAgentMode ? "Memória do Agente" : "Base de Conhecimento";
+
     switch (currentWorkspace.type) {
       case "geral":
         return [
@@ -50,7 +52,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           { title: "Kanban Geral", href: "/kanban", icon: Kanban },
           { title: "Projetos", href: "/projetos", icon: FolderKanban },
           { title: "Estudos", href: "/estudos", icon: GraduationCap },
-          { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen },
+          { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]
       case "estudos":
         return [
@@ -59,7 +61,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           { title: "Roadmap", href: "/estudos/roadmap", icon: Map },
           { title: "Anotações", href: "/estudos/anotacoes", icon: FileText },
           { title: "Agenda de Estudos", href: "/estudos/agenda", icon: Calendar },
-          { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen },
+          { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]
       case "projetos":
         return [
@@ -69,7 +71,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           { title: "Todos os Projetos", href: "/projetos/lista", icon: FolderKanban },
           { title: "Roadmap", href: "/projetos/roadmap", icon: Map },
           { title: "Agenda de Compromissos", href: "/projetos/agenda", icon: Calendar },
-          { title: "Base de Conhecimento", href: "/knowledge", icon: BookOpen },
+          { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]
       default:
         return []

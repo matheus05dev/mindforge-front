@@ -21,8 +21,8 @@ import {
   Heading1,
   Heading2,
   Sparkles,
-  CheckCircle2,
   Bot,
+  History,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
@@ -35,6 +35,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { KnowledgeChatSidebar } from "./knowledge-chat-sidebar"
+import { InlineDiffEditor } from "./inline-diff-editor"
+import { KnowledgeVersionHistory } from "./knowledge-version-history"
 
 interface KnowledgeEditorProps {
   item?: KnowledgeItem
@@ -51,7 +54,7 @@ const categoryColors: Record<string, string> = {
 }
 
 export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
-  const { currentWorkspace, workspaces, isAINotesOpen, toggleAINotes, setAiContext, setKnowledgeItems } = useStore()
+  const { currentWorkspace, workspaces, isAINotesOpen, toggleAINotes, setAiContext, setKnowledgeItems, isAgentMode, toggleAgentMode } = useStore()
   const [title, setTitle] = useState(item?.title || "")
   const [content, setContent] = useState(item?.content || "")
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>(
@@ -59,7 +62,99 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
   )
   const [isPreview, setIsPreview] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [agentProposal, setAgentProposal] = useState<any>(null) // KnowledgeAgentProposal
+  // Local aiMode state removed in favor of global store
+  
+  // History & Diff State
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const [selectedChangeIndices, setSelectedChangeIndices] = useState<Set<number>>(new Set())
+  const [editedChangeContent, setEditedChangeContent] = useState<Map<number, string>>(new Map())
 
+  // New proposal handler
+  const handleProposalReceived = (proposal: any) => {
+    setAgentProposal(proposal)
+    // Auto-select all changes by default
+    const allIndices = new Set<number>(proposal.changes.map((_: any, i: number) => i))
+    setSelectedChangeIndices(allIndices)
+    setEditedChangeContent(new Map())
+  }
+
+  const handleApplyChanges = async () => {
+    if (!agentProposal) return
+
+    try {
+      const { knowledgeService } = await import("@/lib/api/services/knowledge.service")
+      
+      const modifiedContentObj: Record<number, string> = {}
+      editedChangeContent.forEach((val, key) => {
+        modifiedContentObj[key] = val
+      })
+
+      const updated = await knowledgeService.applyProposal(agentProposal.proposalId, {
+        approvedChangeIndices: Array.from(selectedChangeIndices),
+        approveAll: selectedChangeIndices.size === agentProposal.changes.length && editedChangeContent.size === 0,
+        modifiedContent: modifiedContentObj
+      })
+
+      // Defensive check: backend might return array or object
+      let newContent = ""
+      if (Array.isArray(updated)) {
+          newContent = updated[0]?.content || ""
+      } else {
+          newContent = (updated as any).content || ""
+      }
+
+      // Update local content with the new content from backend
+      setContent(newContent)
+      
+      // Force reset of proposal state to ensure UI dismisses the diff view
+      setAgentProposal(null)
+      setSelectedChangeIndices(new Set())
+      setEditedChangeContent(new Map())
+      
+      toast.success("Alterações aplicadas com sucesso!")
+
+      // Refresh knowledge list
+      const updatedItems = await knowledgeService.getAll()
+      const mappedItems = updatedItems.map((apiItem: any) => ({
+        id: String(apiItem.id),
+        workspaceId: apiItem.workspaceId ? String(apiItem.workspaceId) : currentWorkspace.id,
+        title: apiItem.title,
+        content: apiItem.content,
+        tags: apiItem.tags || [],
+        category: "Geral",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }))
+      setKnowledgeItems(mappedItems)
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao aplicar proposta")
+    }
+  }
+
+  const handleRollback = async (version: any) => {
+    if (!item) return
+    try {
+      const { knowledgeService } = await import("@/lib/api/services/knowledge.service")
+      const updated = await knowledgeService.rollbackToVersion(Number(item.id), version.id)
+      
+      setContent(updated.content || "")
+      setTitle(updated.title)
+      toast.success(`Restaurado para versão de ${new Date(version.createdAt).toLocaleString()}`)
+    } catch (error) {
+       toast.error("Erro ao restaurar versão")
+    }
+  }
+
+  // Toolbar actions
+  const insertText = (text: string) => {
+    setContent((prev) => prev + text)
+  }
+
+  const wrapText = (wrapper: string) => {
+    setContent((prev) => prev + `${wrapper}text${wrapper}`)
+  }
+  
   const toolbarButtons = [
     { icon: Heading1, label: "Heading 1", action: () => insertText("# ") },
     { icon: Heading2, label: "Heading 2", action: () => insertText("## ") },
@@ -76,15 +171,8 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
     { icon: ImageIcon, label: "Image", action: () => insertText("![alt](url)") },
   ]
 
-  const insertText = (text: string) => {
-    setContent((prev) => prev + text)
-  }
-
-  const wrapText = (wrapper: string) => {
-    setContent((prev) => prev + `${wrapper}text${wrapper}`)
-  }
-
   const renderMarkdown = (text: string) => {
+    // Simple markdown render for preview
     const html = text
       .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-4 mb-2">$1</h3>')
       .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold mt-6 mb-3">$1</h2>')
@@ -104,63 +192,42 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-border">
+      <div className="flex items-center justify-between pb-4 border-b border-border shrink-0">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={onClose}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <div>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="text-xl font-semibold border-none p-0 h-auto focus-visible:ring-0 bg-transparent"
-            />
-            {item && (
-              <div className="flex items-center gap-2 mt-1">
-                <Badge variant="outline" className={cn("text-xs", categoryColors[item.category])}>
-                  {item.category}
-                </Badge>
-                {item.tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="text-xs gap-1">
-                    <Hash className="h-3 w-3" />
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="text-lg font-semibold bg-transparent border-0 focus-visible:ring-0 px-0 h-auto"
+            placeholder="Título da nota..."
+          />
         </div>
         <div className="flex items-center gap-2">
-          <Select value={selectedWorkspaceId} onValueChange={setSelectedWorkspaceId}>
-            <SelectTrigger className="w-[140px] h-9">
-              <SelectValue placeholder="Workspace" />
-            </SelectTrigger>
-            <SelectContent>
-              {workspaces.map((ws) => (
-                <SelectItem key={ws.id} value={ws.id}>
-                  {ws.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {item && (
+             <Button variant="outline" size="sm" onClick={() => setHistoryOpen(true)} className="gap-2">
+               <History className="h-4 w-4" />
+               Histórico
+             </Button>
+          )}
 
-          <Button variant="outline" size="sm" onClick={() => setIsPreview(!isPreview)}>
-            {isPreview ? "Edit" : "Preview"}
-          </Button>
-          
-          <Button
-            variant={isAINotesOpen ? "secondary" : "outline"}
-            size="sm"
-            className="gap-2 bg-transparent"
+          <Separator orientation="vertical" className="h-6 mx-1" />
+
+          {/* AI Mode Toggle */}
+          <Button 
+            variant={isAgentMode ? "default" : "outline"} 
+            size="sm" 
+            className={cn("gap-2 transition-all", isAgentMode && "bg-purple-600 hover:bg-purple-700")}
             onClick={() => {
-                setAiContext(content)
-                if (!isAINotesOpen) toggleAINotes()
+              toggleAgentMode()
+              toast.info(!isAgentMode ? "Modo Agente ativado" : "Modo Pensamento ativado")
             }}
           >
-            <Sparkles className="h-4 w-4" />
-            AI Assist
+            <Bot className="h-4 w-4" />
+            {isAgentMode ? "Agent Mode" : "Thinking Mode"}
           </Button>
 
           <Button
@@ -170,7 +237,7 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
               if (!title.trim()) return
               setIsSaving(true)
               try {
-                const { knowledgeService } = await import("@/lib/api")
+                const { knowledgeService } = await import("@/lib/api/services/knowledge.service")
                 if (item) {
                   await knowledgeService.update(Number(item.id), {
                     title,
@@ -192,9 +259,14 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
                 // Refresh the knowledge list
                 const updatedItems = await knowledgeService.getAll()
                 const mappedItems = updatedItems.map((apiItem: any) => ({
-                  ...apiItem,
                   id: String(apiItem.id),
                   workspaceId: apiItem.workspaceId ? String(apiItem.workspaceId) : currentWorkspace.id,
+                  title: apiItem.title,
+                  content: apiItem.content,
+                  tags: apiItem.tags || [],
+                  category: "Geral",
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
                 }))
                 setKnowledgeItems(mappedItems)
                 
@@ -214,40 +286,114 @@ export function KnowledgeEditor({ item, onClose }: KnowledgeEditorProps) {
         </div>
       </div>
 
-      {/* Toolbar */}
-      {!isPreview && (
-        <div className="flex items-center gap-1 py-1 border-b border-border px-2">
-          {toolbarButtons.map((btn, idx) =>
+      {/* Toolbar - Only show if not in diff mode */}
+      {!agentProposal && (
+        <div className="flex items-center gap-1 py-2 border-b border-border overflow-x-auto">
+          {toolbarButtons.map((btn, index) =>
             btn.type === "separator" ? (
-              <Separator key={idx} orientation="vertical" className="h-6 mx-1" />
+              <Separator key={index} orientation="vertical" className="h-6 mx-1" />
             ) : (
-              <Button key={idx} variant="ghost" size="icon" className="h-7 w-7" onClick={btn.action} title={btn.label}>
-                {btn.icon && <btn.icon className="h-4 w-4" />}
+              <Button
+                key={index}
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={btn.action}
+                title={btn.label}
+              >
+                <btn.icon className="h-4 w-4" />
               </Button>
             ),
           )}
-          <div className="flex-1" />
+          <div className="ml-auto flex items-center gap-2">
+            <Select value={selectedWorkspaceId} onValueChange={setSelectedWorkspaceId}>
+              <SelectTrigger className="w-[180px] h-8 text-xs">
+                <SelectValue placeholder="Selecione o workspace" />
+              </SelectTrigger>
+              <SelectContent>
+                {workspaces.map((ws) => (
+                  <SelectItem key={ws.id} value={ws.id}>
+                    {ws.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsPreview(!isPreview)}
+              className={cn(isPreview && "bg-muted")}
+            >
+              {isPreview ? "Editar" : "Visualizar"}
+            </Button>
+          </div>
         </div>
       )}
 
-      {/* Editor / Preview Layout */}
-      <div className="flex-1 overflow-hidden flex">
-          <div className="flex-1 overflow-auto py-4 px-6">
-            {isPreview ? (
-              <div
-                className="prose prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
-              />
-            ) : (
-              <Textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="min-h-full resize-none border-none focus-visible:ring-0 font-mono text-sm leading-relaxed bg-transparent p-0"
-                placeholder="Start writing in Markdown..."
-              />
-            )}
-          </div>
+      {/* Editor Content Area */}
+      <div className="flex-1 flex overflow-hidden relative min-h-0 w-full">
+        <div className="flex-1 overflow-hidden flex flex-col p-4 min-w-0 min-h-0">
+          {agentProposal ? (
+            <InlineDiffEditor 
+              originalContent={content}
+              changes={agentProposal.changes}
+              selectedIndices={selectedChangeIndices}
+              editedContentMap={editedChangeContent}
+              onToggleChange={(index) => {
+                const newSet = new Set(selectedChangeIndices)
+                if (newSet.has(index)) newSet.delete(index)
+                else newSet.add(index)
+                setSelectedChangeIndices(newSet)
+              }}
+              onEditChange={(index, text) => {
+                const newMap = new Map(editedChangeContent)
+                newMap.set(index, text)
+                setEditedChangeContent(newMap)
+              }}
+              onApply={handleApplyChanges}
+              onCancel={() => {
+                setAgentProposal(null)
+                setSelectedChangeIndices(new Set())
+                setEditedChangeContent(new Map())
+              }}
+            />
+          ) : isPreview ? (
+            <div
+              className="prose dark:prose-invert max-w-none h-full overflow-y-auto pr-4"
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+            />
+          ) : (
+            <Textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="flex-1 resize-none border-0 focus-visible:ring-0 p-0 leading-7 font-sans text-base"
+              placeholder="Comece a escrever sua nota..."
+            />
+          )}
+        </div>
+
+        {/* Unified Knowledge Chat Sidebar */}
+        {item && (
+            <div className="h-full shrink-0">
+                <KnowledgeChatSidebar
+                knowledgeId={Number(item.id)}
+                contextContent={content}
+                onProposal={handleProposalReceived}
+                aiMode={isAgentMode ? "AGENT" : "THINKING"}
+                />
+            </div>
+        )}
       </div>
+      
+      {/* Version History Sidebar */}
+      {item && (
+        <KnowledgeVersionHistory 
+          knowledgeId={Number(item.id)}
+          isOpen={historyOpen}
+          onClose={() => setHistoryOpen(false)}
+          onRollback={handleRollback}
+        />
+      )}
     </div>
   )
 }

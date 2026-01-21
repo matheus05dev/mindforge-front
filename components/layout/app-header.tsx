@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { ChevronRight, Bell, User, LogOut, Settings, HelpCircle, Sparkles } from "lucide-react"
+import { ChevronRight, Bell, User, LogOut, Settings, HelpCircle, Sparkles, Bot } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -16,7 +16,7 @@ import { useStore } from "@/lib/store"
 
 export function AppHeader() {
   const pathname = usePathname()
-  const { currentWorkspace, toggleAINotes } = useStore()
+  const { currentWorkspace, toggleAINotes, isAgentMode, toggleAgentMode } = useStore()
 
   const pathTitles: Record<string, string> = {
     "/": "Dashboard",
@@ -31,7 +31,7 @@ export function AppHeader() {
     "/estudos/roadmap": "Roadmap de Estudos",
     "/estudos/anotacoes": "Anotações",
     "/estudos/agenda": "Agenda",
-    "/knowledge": "Base de Conhecimento",
+    "/knowledge": isAgentMode ? "Memória do Agente" : "Base de Conhecimento",
     "/documentos": "Documentos",
     "/chat": "Chat com IA",
     "/configuracoes": "Configurações",
@@ -93,6 +93,17 @@ export function AppHeader() {
 
       {/* Ações do Lado Direito */}
       <div className="flex items-center gap-2">
+        {/* Agent Mode Toggle */}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={toggleAgentMode} 
+          title={isAgentMode ? "Desativar Modo Agente" : "Ativar Modo Agente"}
+          className={isAgentMode ? "bg-primary/10 text-primary" : ""}
+        >
+            <Bot className="h-4 w-4" /> 
+        </Button>
+
         {/* AI Notes Toggle */}
         <Button variant="ghost" size="icon" onClick={toggleAINotes} title="MindForge AI Notes">
             <Sparkles className="h-4 w-4 text-primary" />

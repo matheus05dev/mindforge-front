@@ -56,7 +56,7 @@ export function ChatInterface({ aiStyle = "AGENT", compact = false }: ChatInterf
     const loadSessions = async () => {
       try {
         const { aiService } = await import("@/lib/api");
-      const sessions = await aiService.getAllSessions();
+      const sessions = (await aiService.getAllSessions() || []) as Conversation[];
         setConversations(sessions);
 
         // Check URL for session ID
