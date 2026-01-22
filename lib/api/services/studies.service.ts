@@ -1,63 +1,44 @@
-import { apiClient } from "../client"
-import { API_ENDPOINTS } from "../config"
+import { apiClient as api } from "../client"
 import type { Subject, StudySession } from "../types"
 
 export const studiesService = {
   // Subjects
-  getAllSubjects: async (): Promise<Subject[]> => {
-    return apiClient.get<Subject[]>(API_ENDPOINTS.subjects)
+  getAllSubjects: async () => {
+    const data = await api.get<Subject[]>("/api/studies/subjects")
+    return data
   },
 
-  getSubjectById: async (id: number): Promise<Subject> => {
-    return apiClient.get<Subject>(API_ENDPOINTS.subject(id))
+  getSubjectById: async (id: number) => {
+    const data = await api.get<Subject>(`/api/studies/subjects/${id}`)
+    return data
   },
 
-  createSubject: async (data: {
-    name: string
-    description?: string
-    proficiencyLevel: "BEGINNER" | "INTERMEDIATE" | "ADVANCED"
-    professionalLevel: "JUNIOR" | "PLENO" | "SENIOR"
-  }): Promise<Subject> => {
-    return apiClient.post<Subject>(API_ENDPOINTS.subjects, data)
+  createSubject: async (subject: Partial<Subject>) => {
+    const data = await api.post<Subject>("/api/studies/subjects", subject)
+    return data
   },
 
-  updateSubject: async (
-    id: number,
-    data: Partial<{
-      name: string
-      description?: string
-      proficiencyLevel: "BEGINNER" | "INTERMEDIATE" | "ADVANCED"
-      professionalLevel: "JUNIOR" | "PLENO" | "SENIOR"
-    }>,
-  ): Promise<Subject> => {
-    return apiClient.put<Subject>(API_ENDPOINTS.subject(id), data)
+  updateSubject: async (id: number, subject: Partial<Subject>) => {
+    const data = await api.put<Subject>(`/api/studies/subjects/${id}`, subject)
+    return data
   },
 
-  deleteSubject: async (id: number): Promise<void> => {
-    return apiClient.delete<void>(API_ENDPOINTS.subject(id))
+  deleteSubject: async (id: number) => {
+    await api.delete(`/api/studies/subjects/${id}`)
   },
 
   // Sessions
-  getSessions: async (subjectId: number): Promise<StudySession[]> => {
-    return apiClient.get<StudySession[]>(API_ENDPOINTS.sessions(subjectId))
+  getSessionsBySubject: async (subjectId: number) => {
+    const data = await api.get<StudySession[]>(`/api/studies/subjects/${subjectId}/sessions`)
+    return data
   },
 
-  createSession: async (
-    subjectId: number,
-    data: { startTime: string; durationMinutes: number; notes?: string },
-  ): Promise<StudySession> => {
-    return apiClient.post<StudySession>(API_ENDPOINTS.sessions(subjectId), data)
+  logSession: async (subjectId: number, session: Partial<StudySession>) => {
+    const data = await api.post<StudySession>(`/api/studies/subjects/${subjectId}/sessions`, session)
+    return data
   },
 
-  updateSession: async (
-    id: number,
-    data: { startTime?: string; durationMinutes?: number; notes?: string },
-  ): Promise<StudySession> => {
-    return apiClient.put<StudySession>(API_ENDPOINTS.session(id), data)
-  },
-
-  deleteSession: async (id: number): Promise<void> => {
-    return apiClient.delete<void>(API_ENDPOINTS.session(id))
-  },
+  deleteSession: async (id: number) => {
+    await api.delete(`/api/studies/sessions/${id}`)
+  }
 }
-

@@ -33,7 +33,7 @@ export interface Subject {
   name: string
   description?: string
   proficiencyLevel: "BEGINNER" | "INTERMEDIATE" | "ADVANCED"
-  professionalLevel: "JUNIOR" | "PLENO" | "SENIOR"
+  workspaceId?: number
   studySessions?: StudySession[]
 }
 
