@@ -36,9 +36,6 @@ export function SubjectForm({ open, onOpenChange, onSuccess, subject }: SubjectF
   const [proficiencyLevel, setProficiencyLevel] = useState<"BEGINNER" | "INTERMEDIATE" | "ADVANCED">(
     subject?.proficiencyLevel || "BEGINNER",
   )
-  const [professionalLevel, setProfessionalLevel] = useState<"JUNIOR" | "PLENO" | "SENIOR">(
-    subject?.professionalLevel || "JUNIOR",
-  )
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,14 +48,13 @@ export function SubjectForm({ open, onOpenChange, onSuccess, subject }: SubjectF
           name,
           description,
           proficiencyLevel,
-          professionalLevel,
         })
       } else {
         await studiesService.createSubject({
           name,
           description,
           proficiencyLevel,
-          professionalLevel,
+          workspaceId: 1, // Default workspace
         })
       }
       onSuccess()
@@ -67,7 +63,6 @@ export function SubjectForm({ open, onOpenChange, onSuccess, subject }: SubjectF
       setName("")
       setDescription("")
       setProficiencyLevel("BEGINNER")
-      setProfessionalLevel("JUNIOR")
     } catch (error) {
       console.error("Erro ao salvar assunto:", error)
       const errorMessage =
@@ -113,33 +108,18 @@ export function SubjectForm({ open, onOpenChange, onSuccess, subject }: SubjectF
                 rows={3}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="proficiency">Nível de Proficiência</Label>
-                <Select value={proficiencyLevel} onValueChange={(v) => setProficiencyLevel(v as any)}>
-                  <SelectTrigger id="proficiency">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="BEGINNER">Iniciante</SelectItem>
-                    <SelectItem value="INTERMEDIATE">Intermediário</SelectItem>
-                    <SelectItem value="ADVANCED">Avançado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="professional">Nível Profissional</Label>
-                <Select value={professionalLevel} onValueChange={(v) => setProfessionalLevel(v as any)}>
-                  <SelectTrigger id="professional">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="JUNIOR">Júnior</SelectItem>
-                    <SelectItem value="PLENO">Pleno</SelectItem>
-                    <SelectItem value="SENIOR">Sênior</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="grid gap-2">
+              <Label htmlFor="proficiency">Nível de Proficiência</Label>
+              <Select value={proficiencyLevel} onValueChange={(v) => setProficiencyLevel(v as any)}>
+                <SelectTrigger id="proficiency">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BEGINNER">Iniciante</SelectItem>
+                  <SelectItem value="INTERMEDIATE">Intermediário</SelectItem>
+                  <SelectItem value="ADVANCED">Avançado</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>

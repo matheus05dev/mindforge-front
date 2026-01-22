@@ -1,5 +1,5 @@
 import { apiClient as api } from "../client"
-import type { Subject, StudySession } from "../types"
+import type { Subject, StudySession, Note } from "../types"
 
 export const studiesService = {
   // Subjects
@@ -49,19 +49,40 @@ export const studiesService = {
 
   // Notes
   getNotesBySubject: async (subjectId: number) => {
-    return await api.get(`/api/studies/subjects/${subjectId}/notes`)
+    return await api.get<Note[]>(`/api/studies/subjects/${subjectId}/notes`)
+  },
+
+  getNoteById: async (noteId: number) => {
+    return await api.get<Note>(`/api/studies/notes/${noteId}`)
   },
 
   createNote: async (subjectId: number, note: any) => {
-    return await api.post(`/api/studies/subjects/${subjectId}/notes`, note)
+    return await api.post<Note>(`/api/studies/subjects/${subjectId}/notes`, note)
   },
 
   updateNote: async (noteId: number, note: any) => {
-    return await api.put(`/api/studies/notes/${noteId}`, note)
+    return await api.put<Note>(`/api/studies/notes/${noteId}`, note)
   },
 
   deleteNote: async (noteId: number) => {
     await api.delete(`/api/studies/notes/${noteId}`)
+  },
+
+  // AI Assist for Notes
+  noteAIAssist: async (data: {
+    command: "CONTINUE" | "SUMMARIZE" | "FIX_GRAMMAR" | "IMPROVE" | "CUSTOM" | "ASK_AGENT" | "AGENT_UPDATE"
+    context?: string
+    instruction?: string
+    useContext?: boolean
+    noteId?: number
+    agentMode?: boolean
+  }): Promise<{ 
+    result?: string
+    proposal?: any
+    success: boolean
+    message: string 
+  }> => {
+    return await api.post("/api/studies/notes/ai", data)
   },
 
   // Quizzes
@@ -92,5 +113,28 @@ export const studiesService = {
 
   deleteResource: async (resourceId: number) => {
     await api.delete(`/api/studies/resources/${resourceId}`)
+  },
+
+  // Proposal Application
+  applyProposal: async (proposalId: string, approval: {
+    approvedChangeIndices: number[]
+    approveAll: boolean
+    userComment?: string
+    modifiedContent?: Record<number, string>
+  }) => {
+    return await api.post(`/api/studies/notes/ai/proposals/${proposalId}/apply`, approval)
+  },
+
+  // Versioning
+  getVersions: async (noteId: number) => {
+    return await api.get(`/api/studies/notes/${noteId}/versions`)
+  },
+
+  getVersion: async (noteId: number, versionId: number) => {
+    return await api.get(`/api/studies/notes/${noteId}/versions/${versionId}`)
+  },
+
+  rollbackToVersion: async (noteId: number, versionId: number) => {
+    return await api.post(`/api/studies/notes/${noteId}/versions/${versionId}/rollback`, {})
   }
 }

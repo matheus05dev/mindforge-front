@@ -140,15 +140,12 @@ export function SubjectsList() {
               </div>
             </div>
 
-            {/* Níveis de Proficiência e Profissional */}
+            {/* Nível de Proficiência */}
             <div className="mt-4 space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="outline" className={`${proficiencyColors[subject.proficiencyLevel]} font-medium`}>
                   <TrendingUp className="h-3 w-3 mr-1" />
                   {proficiencyLabels[subject.proficiencyLevel]}
-                </Badge>
-                <Badge variant="outline" className="font-medium">
-                  {subject.professionalLevel}
                 </Badge>
               </div>
               

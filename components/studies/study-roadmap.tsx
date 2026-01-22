@@ -87,18 +87,7 @@ export function StudyRoadmap() {
     }
   }
 
-  const getProfessionalColor = (level: string) => {
-    switch (level) {
-      case "JUNIOR":
-        return "bg-purple-500/10 text-purple-500 border-purple-500/20"
-      case "PLENO":
-        return "bg-orange-500/10 text-orange-500 border-orange-500/20"
-      case "SENIOR":
-        return "bg-red-500/10 text-red-500 border-red-500/20"
-      default:
-        return "bg-muted text-muted-foreground"
-    }
-  }
+
 
   // Calcular estatísticas
   const totalHours = sessions.reduce((acc, session) => acc + (session.durationMinutes || 0), 0) / 60
@@ -193,14 +182,12 @@ export function StudyRoadmap() {
               subjects={subjects} 
               sessions={sessions}
               getProficiencyColor={getProficiencyColor}
-              getProfessionalColor={getProfessionalColor}
             />
           ) : (
             <MindmapView 
               subjects={subjects} 
               sessions={sessions}
               getProficiencyColor={getProficiencyColor}
-              getProfessionalColor={getProfessionalColor}
             />
           )}
         </CardContent>
@@ -212,13 +199,11 @@ export function StudyRoadmap() {
 function TimelineView({ 
   subjects, 
   sessions,
-  getProficiencyColor,
-  getProfessionalColor
+  getProficiencyColor
 }: { 
   subjects: Subject[]
   sessions: StudySession[]
   getProficiencyColor: (level: string) => string
-  getProfessionalColor: (level: string) => string
 }) {
   return (
     <div className="space-y-4">
@@ -247,14 +232,9 @@ function TimelineView({
                       <p className="text-sm text-muted-foreground mt-1">{subject.description}</p>
                     )}
                   </div>
-                  <div className="flex gap-2">
-                    <Badge variant="outline" className={getProficiencyColor(subject.proficiencyLevel)}>
-                      {subject.proficiencyLevel}
-                    </Badge>
-                    <Badge variant="outline" className={getProfessionalColor(subject.professionalLevel)}>
-                      {subject.professionalLevel}
-                    </Badge>
-                  </div>
+                  <Badge variant="outline" className={getProficiencyColor(subject.proficiencyLevel)}>
+                    {subject.proficiencyLevel}
+                  </Badge>
                 </div>
                 
                 {/* Sessões do subject */}
@@ -296,13 +276,11 @@ function TimelineView({
 function MindmapView({ 
   subjects, 
   sessions,
-  getProficiencyColor,
-  getProfessionalColor
+  getProficiencyColor
 }: { 
   subjects: Subject[]
   sessions: StudySession[]
   getProficiencyColor: (level: string) => string
-  getProfessionalColor: (level: string) => string
 }) {
   return (
     <div className="relative min-h-[600px] p-8 overflow-auto">
@@ -351,14 +329,9 @@ function MindmapView({
               <div className="relative z-10 bg-primary/10 border-2 border-primary rounded-lg p-4 mb-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <h3 className="font-semibold text-lg">{subject.name}</h3>
-                  <div className="flex gap-1 flex-shrink-0">
-                    <Badge variant="outline" className={cn("text-xs", getProficiencyColor(subject.proficiencyLevel))}>
-                      {subject.proficiencyLevel}
-                    </Badge>
-                    <Badge variant="outline" className={cn("text-xs", getProfessionalColor(subject.professionalLevel))}>
-                      {subject.professionalLevel}
-                    </Badge>
-                  </div>
+                  <Badge variant="outline" className={cn("text-xs", getProficiencyColor(subject.proficiencyLevel))}>
+                    {subject.proficiencyLevel}
+                  </Badge>
                 </div>
                 {subject.description && (
                   <p className="text-sm text-muted-foreground mb-2">{subject.description}</p>
