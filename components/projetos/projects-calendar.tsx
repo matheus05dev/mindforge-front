@@ -380,6 +380,29 @@ export function ProjectsCalendar() {
                           <p className="text-sm text-foreground">{event.description}</p>
                         )}
                       </div>
+                      <div className="flex items-center gap-2">
+                        {!event.completed && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-2"
+                            onClick={async () => {
+                              try {
+                                // Toggle completion status
+                                await projectsService.updateMilestone(event.id, {
+                                  completed: true
+                                })
+                                loadData()
+                              } catch (error) {
+                                console.error("Erro ao marcar como concluído:", error)
+                              }
+                            }}
+                          >
+                            <CheckCircle2 className="h-4 w-4" />
+                            Concluir
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )

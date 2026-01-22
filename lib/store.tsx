@@ -28,6 +28,7 @@ interface StoreContextType {
 
   // Projects
   projects: Project[]
+  setProjects: (projects: Project[]) => void
   addProject: (project: Omit<Project, "id" | "createdAt" | "updatedAt">) => void
   updateProject: (id: string, updates: Partial<Project>) => void
 
@@ -147,6 +148,43 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  // Persist and restore workspace
+  useEffect(() => {
+    // Detect workspace from URL on mount
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname
+      let detectedWorkspace = currentWorkspace
+
+      if (path.startsWith('/projetos') || path.startsWith('/kanban')) {
+        detectedWorkspace = defaultWorkspaces.find(w => w.type === 'projetos') || defaultWorkspaces[0]
+      } else if (path.startsWith('/estudos')) {
+        detectedWorkspace = defaultWorkspaces.find(w => w.type === 'estudos') || defaultWorkspaces[0]
+      } else if (path === '/' || path.startsWith('/dashboard')) {
+        detectedWorkspace = defaultWorkspaces.find(w => w.type === 'geral') || defaultWorkspaces[0]
+      } else {
+        // Try to restore from localStorage
+        const storedWorkspaceId = localStorage.getItem("mindforge_current_workspace")
+        if (storedWorkspaceId) {
+          const restoredWorkspace = defaultWorkspaces.find(w => w.id === storedWorkspaceId)
+          if (restoredWorkspace) {
+            detectedWorkspace = restoredWorkspace
+          }
+        }
+      }
+
+      if (detectedWorkspace.id !== currentWorkspace.id) {
+        setCurrentWorkspace(detectedWorkspace)
+      }
+    }
+  }, []) // Run only on mount
+
+  // Save workspace to localStorage when it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("mindforge_current_workspace", currentWorkspace.id)
+    }
+  }, [currentWorkspace])
+
   return (
     <StoreContext.Provider
       value={{
@@ -154,6 +192,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         currentWorkspace,
         setCurrentWorkspace,
         projects,
+        setProjects,
         addProject,
         updateProject,
         tasks,

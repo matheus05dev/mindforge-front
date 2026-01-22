@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { projectsService } from "@/lib/api/services/projects.service";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ProjectForm } from "./project-form";
@@ -25,8 +27,10 @@ import {
   Archive,
   Github,
   Target,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { GeneralProjectStats } from "./general-stats";
 
 const statusConfig = {
   ativo: {
@@ -44,9 +48,43 @@ const statusConfig = {
 };
 
 export function ProjetosContent() {
-  const { projects, tasks } = useStore();
+  const router = useRouter();
+  const { projects, setProjects, tasks } = useStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch initial data
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const data = await projectsService.getAll();
+        
+        // Adaptar dados da API para o formato frontend
+        const adaptedProjects = data.map(p => ({
+            id: String(p.id),
+            workspaceId: String(p.workspaceId || 3), // Default para Workspace Projetos
+            name: p.name,
+            description: p.description,
+            status: "ativo" as const, // API ainda não retorna status
+            color: "#4f46e5", // Cor padrão
+            githubRepo: p.githubRepo,
+            milestones: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        }));
+
+        setProjects(adaptedProjects);
+      } catch (error) {
+        console.error("Erro ao carregar projetos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, [setProjects]);
 
   const filteredProjects = projects.filter(
     (project) =>
@@ -64,42 +102,74 @@ export function ProjetosContent() {
   };
 
   const handleFormSuccess = () => {
-    // Recarregar dados se necessário
+    // Recarregar dados
+    projectsService.getAll().then(data => {
+        const adaptedProjects = data.map(p => ({
+            id: String(p.id),
+            workspaceId: String(p.workspaceId || 3),
+            name: p.name,
+            description: p.description,
+            status: "ativo" as const,
+            color: "#4f46e5",
+            githubRepo: p.githubRepo,
+            milestones: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        }));
+        setProjects(adaptedProjects);
+    });
   };
 
   return (
-    <div className="space-y-6">
+
+
+
+    <div className="space-y-8">
       {/* Cabeçalho da Página */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Projetos</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard de Projetos</h1>
           <p className="text-muted-foreground">
-            Gerencie e acompanhe todos os seus projetos.
+            Visão geral de todos os seus projetos e métricas.
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setIsFormOpen(true)}>
-          <Plus className="h-4 w-4" />
-          Novo Projeto
-        </Button>
+        <div className="flex items-center gap-2">
+            <Button className="gap-2" onClick={() => setIsFormOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Novo Projeto
+            </Button>
+        </div>
       </div>
+
+      {/* Stats Cards */}
+      <GeneralProjectStats />
 
       {/* Busca e Filtros */}
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Buscar projetos..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
+      <div className="flex items-center justify-between">
+         <h2 className="text-xl font-semibold tracking-tight">Seus Projetos</h2>
+         <div className="flex items-center gap-4">
+            <div className="relative flex-1 w-[300px]">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+                placeholder="Buscar projetos..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+            />
+            </div>
+            <Button variant="outline" size="icon">
+            <Filter className="h-4 w-4" />
+            </Button>
         </div>
-        <Button variant="outline" size="icon">
-          <Filter className="h-4 w-4" />
-        </Button>
       </div>
 
-      {/* Grid de Projetos */}
+      {/* Loading State */}
+      {loading ? (
+        <div className="flex items-center justify-center p-8">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        </div>
+      ) : (
+      /* Grid de Projetos */
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredProjects.map((project) => {
           const stats = getProjectStats(project.id);
@@ -109,11 +179,12 @@ export function ProjetosContent() {
               : 0;
 
           return (
-            <Link
+            <div
               key={project.id}
-              href={`/projetos/kanban?projeto=${project.id}`}
+              onClick={() => router.push(`/projetos/kanban?projeto=${project.id}`)}
+              className="cursor-pointer"
             >
-              <div className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+              <div className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 relative">
                 {/* Header */}
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -144,7 +215,10 @@ export function ProjetosContent() {
                   <DropdownMenu>
                     <DropdownMenuTrigger
                       asChild
-                      onClick={(e) => e.preventDefault()}
+                      onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                      }}
                     >
                       <Button
                         variant="ghost"
@@ -154,7 +228,7 @@ export function ProjetosContent() {
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                       <DropdownMenuItem>Editar Projeto</DropdownMenuItem>
                       <DropdownMenuItem>Duplicar</DropdownMenuItem>
                       <DropdownMenuSeparator />
@@ -221,11 +295,28 @@ export function ProjetosContent() {
                     </span>
                   </div>
                 </div>
+
+                {/* Quick Action Bar */}
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex bg-background/80 backdrop-blur-sm rounded-md shadow-sm border border-border p-1 z-10" onClick={(e) => e.stopPropagation()}>
+                     <Link href={`/projetos/kanban?projeto=${project.id}`} className="p-2 hover:bg-accent rounded-sm" title="Kanban">
+                        <FolderKanban className="h-4 w-4 text-muted-foreground hover:text-primary"/>
+                     </Link>
+                     <Link href={`/projetos/roadmap?projeto=${project.id}`} className="p-2 hover:bg-accent rounded-sm" title="Roadmap">
+                        <Target className="h-4 w-4 text-muted-foreground hover:text-purple-500"/>
+                     </Link>
+                     <Link href={`/projetos/decisoes/?projeto=${project.id}`} className="p-2 hover:bg-accent rounded-sm" title="Decisões (ADRs)">
+                        <Archive className="h-4 w-4 text-muted-foreground hover:text-blue-500"/>
+                     </Link>
+                     <Link href={`/projetos/documentos/?projeto=${project.id}`} className="p-2 hover:bg-accent rounded-sm" title="Documentos">
+                        <FileText className="h-4 w-4 text-muted-foreground hover:text-orange-500"/>
+                     </Link>
+                </div>
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>
+      )}
 
       {/* Project Form Modal */}
       <ProjectForm

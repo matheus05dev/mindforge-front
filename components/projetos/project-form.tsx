@@ -36,6 +36,7 @@ export function ProjectForm({
 
     try {
       await projectsService.create({
+        workspaceId: 1, // TODO: Pegar do contexto de auth/workspace quando tiver multi-tenant
         name,
         description,
       });

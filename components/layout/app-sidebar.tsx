@@ -19,6 +19,8 @@ import {
   FileText,
   Calendar,
   Map,
+  Scale,
+  BarChart,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -50,7 +52,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
         return [
           { title: "Dashboard", href: "/", icon: LayoutDashboard },
           { title: "Kanban Geral", href: "/kanban", icon: Kanban },
-          { title: "Projetos", href: "/projects", icon: FolderKanban },
+          { title: "Projetos", href: "/projetos", icon: FolderKanban },
           { title: "Estudos", href: "/estudos", icon: GraduationCap },
           { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]
@@ -70,6 +72,8 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           { title: "Kanban por Projeto", href: "/projetos/kanban", icon: Kanban },
           { title: "Todos os Projetos", href: "/projetos/lista", icon: FolderKanban },
           { title: "Roadmap", href: "/projetos/roadmap", icon: Map },
+          { title: "Decisões (ADR)", href: "/projetos/decisoes", icon: Scale },
+          { title: "Métricas", href: "/projetos/metricas", icon: BarChart },
           { title: "Agenda de Compromissos", href: "/projetos/agenda", icon: Calendar },
           { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]

@@ -148,3 +148,30 @@ export interface AIMessage {
 export type AIMode = "MENTOR" | "ANALYST" | "DEBUG_ASSISTANT" | "SOCRATIC_TUTOR"
 
 export type AIProvider = "gemini" | "groq" | null
+
+export type DecisionStatus = "PROPOSED" | "ACCEPTED" | "REJECTED" | "DEPRECATED" | "SUPERSEDED"
+
+export interface DecisionRecord {
+  id: number
+  projectId: number
+  title: string
+  status: DecisionStatus
+  context: string
+  decision: string
+  consequences: string
+  tags: string[]
+  author?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DecisionRequest {
+  projectId: number
+  title: string
+  status: DecisionStatus
+  context: string
+  decision: string
+  consequences: string
+  tags: string[]
+  author?: string
+}
