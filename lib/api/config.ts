@@ -41,6 +41,7 @@ export const API_ENDPOINTS = {
     `/api/kanban/tasks/${taskId}/move/${columnId}`,
 
   // Documents
+  documents: "/api/documents",
   documentsUpload: "/api/documents/upload",
   documentsDownload: (fileName: string) =>
     `/api/documents/download/${fileName}`,

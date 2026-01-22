@@ -11,7 +11,8 @@ export function DocumentUploadClient() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const handleSuccess = () => {
-    // Aqui você pode recarregar dados se necessário
+    // Trigger refresh of documents list
+    window.dispatchEvent(new Event("documents:refresh"))
   };
 
   return (

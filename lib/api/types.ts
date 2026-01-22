@@ -91,6 +91,7 @@ export interface KanbanTask {
 export interface Document {
   id: number
   fileName: string
+  originalFileName?: string
   fileType: string
   downloadUri: string
   uploadDate: string

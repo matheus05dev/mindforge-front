@@ -40,12 +40,21 @@ export function DocumentUpload({
     setIsLoading(true);
 
     try {
-      // Aqui você implementaria o envio dos arquivos para a API
-      // await documentsService.uploadFiles(files)
+      const { documentsService } = await import("@/lib/api");
+      
+      // Upload each file
+      for (const file of files) {
+        await documentsService.upload({ file });
+      }
 
       onSuccess();
       onOpenChange(false);
       setFiles([]);
+      
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error("Erro ao fazer upload:", error);
       alert("Erro ao fazer upload dos arquivos. Tente novamente.");

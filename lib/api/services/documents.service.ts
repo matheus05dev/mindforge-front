@@ -11,6 +11,10 @@ export interface UploadDocumentParams {
 }
 
 export const documentsService = {
+  getAll: async (): Promise<Document[]> => {
+    return apiClient.get<Document[]>(API_ENDPOINTS.documents)
+  },
+
   upload: async (params: UploadDocumentParams): Promise<Document> => {
     const formData = new FormData()
     formData.append("file", params.file)
@@ -31,6 +35,10 @@ export const documentsService = {
   downloadAsUrl: async (fileName: string): Promise<string> => {
     const blob = await documentsService.download(fileName)
     return URL.createObjectURL(blob)
+  },
+
+  delete: async (id: number): Promise<void> => {
+    return apiClient.delete(`${API_ENDPOINTS.documents}/${id}`)
   },
 }
 
