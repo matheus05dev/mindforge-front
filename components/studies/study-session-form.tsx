@@ -67,7 +67,7 @@ export function StudySessionForm({ onSuccess, sessionId }: StudySessionFormProps
         })
         toast.success("Sessão atualizada com sucesso!")
       } else {
-        await studiesService.createSession(Number(data.subjectId), {
+        await studiesService.logSession(Number(data.subjectId), {
           startTime: data.startTime,
           durationMinutes: data.durationMinutes,
           notes: data.notes,

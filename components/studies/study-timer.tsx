@@ -17,17 +17,25 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 
 interface StudyTimerProps {
-  subjects: Subject[]
-  onSessionLogged: () => void
+  subjects?: Subject[]
+  subjectId?: number
+  subjectName?: string
+  onSessionLogged?: () => void
 }
 
-export function StudyTimer({ subjects, onSessionLogged }: StudyTimerProps) {
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string>("")
+export function StudyTimer({ subjects = [], subjectId, subjectName, onSessionLogged }: StudyTimerProps) {
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string>(subjectId ? String(subjectId) : "")
   const [status, setStatus] = useState<"IDLE" | "RUNNING" | "PAUSED" | "FINISHED">("IDLE")
   const [seconds, setSeconds] = useState(0)
   const [notes, setNotes] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    if (subjectId) {
+        setSelectedSubjectId(String(subjectId))
+    }
+  }, [subjectId])
 
   useEffect(() => {
     if (status === "RUNNING") {
@@ -90,7 +98,7 @@ export function StudyTimer({ subjects, onSessionLogged }: StudyTimerProps) {
         notes: notes
       })
 
-      onSessionLogged()
+      onSessionLogged?.()
       handleReset()
     } catch (error) {
       console.error("Erro ao salvar sessão:", error)
@@ -111,25 +119,31 @@ export function StudyTimer({ subjects, onSessionLogged }: StudyTimerProps) {
       </CardHeader>
       
       <CardContent className="space-y-6 flex-1 flex flex-col">
-        {/* Subject Selection */}
+        {/* Subject Selection or Display */}
         <div className="space-y-2">
           <Label>O que vamos estudar agora?</Label>
-          <Select 
-            value={selectedSubjectId} 
-            onValueChange={setSelectedSubjectId} 
-            disabled={status === "RUNNING" || status === "PAUSED"}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione uma matéria..." />
-            </SelectTrigger>
-            <SelectContent>
-              {subjects.map((sub) => (
-                <SelectItem key={sub.id} value={sub.id.toString()}>
-                  {sub.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {subjectId ? (
+              <div className="text-lg font-semibold text-primary">
+                  {subjectName || "Matéria Selecionada"}
+              </div>
+          ) : (
+            <Select 
+                value={selectedSubjectId} 
+                onValueChange={setSelectedSubjectId} 
+                disabled={status === "RUNNING" || status === "PAUSED"}
+            >
+                <SelectTrigger>
+                <SelectValue placeholder="Selecione uma matéria..." />
+                </SelectTrigger>
+                <SelectContent>
+                {subjects?.map((sub) => (
+                    <SelectItem key={sub.id} value={sub.id.toString()}>
+                    {sub.name}
+                    </SelectItem>
+                ))}
+                </SelectContent>
+            </Select>
+          )}
         </div>
 
         {/* Timer Display */}

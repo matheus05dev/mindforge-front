@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, BookOpen, MoreHorizontal, Trash2, Edit } from "lucide-react"
+import Link from "next/link"
+import { Plus, BookOpen, MoreHorizontal, Trash2, Edit, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {

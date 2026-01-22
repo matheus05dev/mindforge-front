@@ -27,6 +27,8 @@ export function AppHeader() {
     "/projetos/roadmap": "Roadmap de Projetos",
     "/projetos/agenda": "Agenda de Compromissos",
     "/estudos": "Estudos",
+    "/studies": "Estudos",
+    "/studies/subjects": "Matérias",
     "/estudos/cursos": "Meus Estudos",
     "/estudos/roadmap": "Roadmap de Estudos",
     "/estudos/anotacoes": "Anotações",

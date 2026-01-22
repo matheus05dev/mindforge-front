@@ -38,7 +38,7 @@ export function StudyRoadmap() {
           // Carregar sessions de todos os subjects
           for (const subject of subjectsData) {
             try {
-              const subjectSessions = await studiesService.getSessions(subject.id)
+              const subjectSessions = await studiesService.getSessionsBySubject(subject.id)
               const sessionsWithSubjectName = subjectSessions.map((session) => ({
                 ...session,
                 subjectName: subject.name,

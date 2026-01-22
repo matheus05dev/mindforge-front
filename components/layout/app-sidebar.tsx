@@ -50,17 +50,17 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
         return [
           { title: "Dashboard", href: "/", icon: LayoutDashboard },
           { title: "Kanban Geral", href: "/kanban", icon: Kanban },
-          { title: "Projetos", href: "/projects", icon: FolderKanban }, // Assuming projects is /projects too, checking context
-          { title: "Estudos", href: "/studies", icon: GraduationCap },
+          { title: "Projetos", href: "/projects", icon: FolderKanban },
+          { title: "Estudos", href: "/estudos", icon: GraduationCap },
           { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]
-      case "estudos": // Keep workspace type id as 'estudos'
+      case "estudos":
         return [
-          { title: "Visão Geral", href: "/studies", icon: LayoutDashboard },
-          { title: "Meus Estudos", href: "/studies/courses", icon: GraduationCap },
-          { title: "Roadmap", href: "/studies/roadmap", icon: Map },
-          { title: "Anotações", href: "/studies/notes", icon: FileText },
-          { title: "Agenda de Estudos", href: "/studies/agenda", icon: Calendar },
+          { title: "Visão Geral", href: "/estudos", icon: LayoutDashboard },
+          { title: "Meus Estudos", href: "/estudos/cursos", icon: GraduationCap },
+          { title: "Roadmap", href: "/estudos/roadmap", icon: Map },
+          { title: "Anotações", href: "/estudos/anotacoes", icon: FileText },
+          { title: "Agenda de Estudos", href: "/estudos/agenda", icon: Calendar },
           { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]
       case "projetos":

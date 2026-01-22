@@ -33,6 +33,7 @@ export interface Subject {
   name: string
   description?: string
   proficiencyLevel: "BEGINNER" | "INTERMEDIATE" | "ADVANCED"
+  professionalLevel?: "JUNIOR" | "PLENO" | "SENIOR"
   workspaceId?: number
   studySessions?: StudySession[]
 }
@@ -45,6 +46,47 @@ export interface StudySession {
   durationMinutes: number
   notes?: string
   documents?: Document[]
+}
+
+export interface Note {
+  id: number
+  subjectId: number
+  title: string
+  content?: string
+  tags?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface QuizQuestion {
+  id?: number
+  question: string
+  options: string
+  correctAnswer: number
+  explanation?: string
+  orderIndex?: number
+}
+
+export interface Quiz {
+  id: number
+  subjectId: number
+  title: string
+  description?: string
+  difficulty: "EASY" | "MEDIUM" | "HARD"
+  questions?: QuizQuestion[]
+  createdAt: string
+  questionCount: number
+}
+
+export interface StudyResource {
+  id: number
+  subjectId: number
+  title: string
+  type: "VIDEO" | "ARTICLE" | "BOOK" | "COURSE" | "DOCUMENTATION" | "OTHER"
+  url: string
+  description?: string
+  isAIGenerated: boolean
+  createdAt: string
 }
 
 // Tipo para anotações independentes (se for criar endpoint)
