@@ -105,6 +105,7 @@ export interface ChatMessage {
     name: string;
     type: string;
     size: number;
+    url?: string;
   }[];
   createdAt: string;
 }

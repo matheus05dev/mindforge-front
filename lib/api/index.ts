@@ -12,4 +12,5 @@ export { knowledgeService } from "./services/knowledge.service"
 export { kanbanService } from "./services/kanban.service"
 export { documentsService } from "./services/documents.service"
 export { aiService } from "./services/ai.service"
+export { mindMapService } from "./services/mind-map.service"
 

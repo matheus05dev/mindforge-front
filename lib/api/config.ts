@@ -62,6 +62,9 @@ export const API_ENDPOINTS = {
   aiChatSessionById: (id: number | string) => `/v1/ai/chat/${id}`,
   aiDocumentAnalyze: "/v1/ai/document/analyze",
 
+  // Mind Map
+  mindMap: "/api/mind-map",
+
   // Integrations
   githubConnect: "/api/integrations/github/connect",
   githubCallback: "/api/integrations/github/callback",

@@ -139,6 +139,7 @@ export function ChatInterface({ aiStyle = "AGENT", compact = false }: ChatInterf
       name: file.name,
       type: file.type,
       size: file.size,
+      url: URL.createObjectURL(file),
     }));
 
     const userMessage: ChatMessage = {

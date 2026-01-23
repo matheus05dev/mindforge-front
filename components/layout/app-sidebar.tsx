@@ -16,6 +16,7 @@ import {
   PanelLeft,
   Sparkles,
   Kanban,
+  Workflow,
   FileText,
   Calendar,
   Map,
@@ -51,7 +52,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
       case "geral":
         return [
           { title: "Dashboard", href: "/", icon: LayoutDashboard },
-          { title: "Kanban Geral", href: "/kanban", icon: Kanban },
+          { title: "Mapas Mentais", href: "/mapas-mentais", icon: Workflow },
           { title: "Projetos", href: "/projetos", icon: FolderKanban },
           { title: "Estudos", href: "/estudos", icon: GraduationCap },
           { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
