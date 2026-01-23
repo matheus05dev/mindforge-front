@@ -145,5 +145,25 @@ export const studiesService = {
 
   rollbackToVersion: async (noteId: number, versionId: number) => {
     return await api.post(`/api/studies/notes/${noteId}/versions/${versionId}/rollback`, {})
+  },
+
+
+  // Roadmaps
+  generateRoadmap: async (topic: string, duration: string, difficulty: string) => {
+    const data = await api.post("/api/studies/roadmaps/generate", {
+      topic,
+      duration,
+      difficulty,
+    })
+    return data
+  },
+
+  getAllRoadmaps: async () => {
+    return await api.get("/api/studies/roadmaps")
+  },
+
+  getRoadmapById: async (id: number) => {
+    return await api.get(`/api/studies/roadmaps/${id}`)
   }
 }
+
