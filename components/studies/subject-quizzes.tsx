@@ -7,6 +7,7 @@ import { Plus, Trash2, Play } from "lucide-react"
 import { studiesService } from "@/lib/api"
 import type { Quiz } from "@/lib/api/types"
 import { QuizPlayer } from "./quiz-player"
+import { QuizGeneratorDialog } from "./quiz-generator-dialog"
 
 interface SubjectQuizzesProps {
   subjectId: number
@@ -23,7 +24,7 @@ export function SubjectQuizzes({ subjectId }: SubjectQuizzesProps) {
   async function loadQuizzes() {
     try {
       const data = await studiesService.getQuizzesBySubject(subjectId)
-      setQuizzes(data)
+      setQuizzes(data as Quiz[])
     } catch (error) {
       console.error("Erro ao carregar quizzes:", error)
     }
@@ -57,10 +58,7 @@ export function SubjectQuizzes({ subjectId }: SubjectQuizzesProps) {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Quizzes</h2>
-        <Button disabled>
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Quiz (Em breve)
-        </Button>
+        <QuizGeneratorDialog subjectId={subjectId} onQuizGenerated={loadQuizzes} />
       </div>
 
       <div className="grid gap-4">

@@ -102,6 +102,15 @@ export const studiesService = {
     await api.delete(`/api/studies/quizzes/${quizId}`)
   },
 
+  generateQuiz: async (subjectId: number, topic: string, difficulty: string, count: number): Promise<any> => { // Changed Quiz to any as Quiz type is not imported
+    const { data } = await api.post<any>(`/api/studies/subjects/${subjectId}/quizzes/generate`, { // Changed Quiz to any
+      topic,
+      difficulty,
+      count,
+    })
+    return data
+  },
+
   // Resources
   getResourcesBySubject: async (subjectId: number) => {
     return await api.get(`/api/studies/subjects/${subjectId}/resources`)
