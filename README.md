@@ -1,7 +1,5 @@
 # MindForge Frontend - AI-Native Knowledge Workspace
 
-![MindForge Banner](https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop)
-
 ![Status](https://img.shields.io/badge/status-active_development-blue?style=for-the-badge&logo=git)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white)
