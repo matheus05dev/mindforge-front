@@ -5,7 +5,7 @@ import { useApi } from "@/lib/hooks/use-api"
 import { studiesService } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, TrendingUp, MoreHorizontal, Plus } from "lucide-react"
+import { Clock, TrendingUp, MoreHorizontal, Plus, GraduationCap } from "lucide-react"
 import { useRouter } from "next/navigation"
 import {
   DropdownMenu,
@@ -32,14 +32,14 @@ const proficiencyColors: Record<string, string> = {
 
 export function SubjectsList() {
   const router = useRouter()
-  const { data: apiSubjects, loading, error, execute } = useApi<Subject[]>()
+  const { data: apiData, loading, error, execute } = useApi<any>()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingSubject, setEditingSubject] = useState<Subject | undefined>()
 
-  const subjects = apiSubjects || []
+  const subjects: Subject[] = apiData?.content || []
 
   const loadSubjects = useCallback(() => {
-    execute(() => studiesService.getAllSubjects())
+    execute(() => studiesService.getAllSubjects({ size: 1000 }))
   }, [execute])
 
   useEffect(() => {
@@ -88,10 +88,16 @@ export function SubjectsList() {
   if (!subjects || subjects.length === 0) {
     return (
       <>
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">Nenhum estudo cadastrado ainda.</p>
-          <Button className="gap-2" onClick={handleCreate}>
-            <Plus className="h-4 w-4" />
+        <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border bg-card/50 border-dashed">
+          <div className="bg-primary/10 p-4 rounded-full mb-4">
+            <GraduationCap className="h-10 w-10 text-primary" />
+          </div>
+          <h3 className="text-xl font-semibold mb-2">Sua jornada de aprendizado começa aqui!</h3>
+          <p className="text-muted-foreground mb-6 text-center max-w-md px-4">
+            Adicione matérias, cursos ou tópicos que você quer dominar. Acompanhe seu progresso e organize seus estudos de forma eficiente.
+          </p>
+          <Button className="gap-2 text-md px-6 h-11" onClick={handleCreate}>
+            <Plus className="h-5 w-5" />
             Criar Primeiro Estudo
           </Button>
         </div>

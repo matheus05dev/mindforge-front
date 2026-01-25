@@ -51,11 +51,11 @@ export function ProjectsCalendar() {
 
   const loadData = async () => {
     try {
-      const projectsData = await execute(() => projectsService.getAll())
-      if (projectsData) {
+      const projectsData = await execute(() => projectsService.getAll({ size: 1000 }))
+      if (projectsData?.content) {
         // Carregar milestones de todos os projetos
         const allMilestones: Milestone[] = []
-        for (const project of projectsData) {
+        for (const project of projectsData.content) {
           try {
             // Primeiro tenta usar milestones que vêm com o projeto
             if (project.milestones && project.milestones.length > 0) {

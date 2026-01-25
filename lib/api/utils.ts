@@ -53,3 +53,22 @@ export function parseGithubRepo(url: string): { owner: string; repo: string } | 
   }
 }
 
+
+/**
+ * Converte objeto de parâmetros em query string
+ */
+export function toQueryString(params?: Record<string, any>): string {
+  if (!params) return ""
+  const query = new URLSearchParams()
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (Array.isArray(value)) {
+          value.forEach(v => query.append(key, String(v)))
+      } else {
+          query.append(key, String(value))
+      }
+    }
+  })
+  const str = query.toString()
+  return str ? `?${str}` : ""
+}

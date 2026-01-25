@@ -1,9 +1,7 @@
-"use client"
-
 import { FileText, FolderKanban, GraduationCap, MessageSquare, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-interface Activity {
+export interface Activity {
   id: string
   type: "project" | "study" | "knowledge" | "chat" | "task"
   title: string
@@ -27,9 +25,11 @@ const colorMap = {
   task: "text-emerald-500 bg-emerald-500/10",
 }
 
-export function RecentActivity() {
-  const activities: Activity[] = []
+interface RecentActivityProps {
+  activities?: Activity[]
+}
 
+export function RecentActivity({ activities = [] }: RecentActivityProps) {
   return (
     <div className="rounded-lg border border-border bg-card p-6">
       <div className="mb-4">
@@ -37,24 +37,28 @@ export function RecentActivity() {
         <p className="text-sm text-muted-foreground">Suas últimas atualizações</p>
       </div>
       <div className="space-y-4">
-        {activities.map((activity) => {
-          const Icon = iconMap[activity.type]
-          return (
-            <div
-              key={activity.id}
-              className="flex items-start gap-3 rounded-md p-2 transition-colors hover:bg-accent/50 cursor-pointer"
-            >
-              <div className={cn("rounded-md p-2", colorMap[activity.type])}>
-                <Icon className="h-4 w-4" />
+        {activities.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Nenhuma atividade recente.</p>
+        ) : (
+          activities.map((activity) => {
+            const Icon = iconMap[activity.type]
+            return (
+              <div
+                key={activity.id}
+                className="flex items-start gap-3 rounded-md p-2 transition-colors hover:bg-accent/50 cursor-pointer"
+              >
+                <div className={cn("rounded-md p-2", colorMap[activity.type])}>
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{activity.title}</p>
+                  <p className="text-xs text-muted-foreground truncate">{activity.description}</p>
+                </div>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{activity.title}</p>
-                <p className="text-xs text-muted-foreground truncate">{activity.description}</p>
-              </div>
-              <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
-            </div>
-          )
-        })}
+            )
+          })
+        )}
       </div>
     </div>
   )

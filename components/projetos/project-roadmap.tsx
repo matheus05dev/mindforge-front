@@ -44,7 +44,8 @@ export function ProjectRoadmap() {
         
         // Carregar da API
         try {
-          projectsData = await projectsService.getAll()
+          const response = await projectsService.getAll({ size: 1000 })
+          projectsData = response.content
         } catch (error) {
           console.error("Erro ao carregar projetos:", error)
           projectsData = []

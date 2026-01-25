@@ -19,6 +19,8 @@ export interface Project {
   color: string;
   githubRepo?: string;
   milestones?: Milestone[];
+  milestoneCount?: number;
+  documentCount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -73,6 +75,7 @@ export interface Subject {
     | "intermediario"
     | "avancado"
     | "especialista";
+  sessionCount?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -160,6 +163,30 @@ export const PRIORITY_LABELS: Record<Task["priority"], string> = {
   media: "Média",
   alta: "Alta",
 };
+
+
+export interface Page<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}
+
+export interface Pageable {
+  page?: number;
+  size?: number;
+  sort?: string[];
+}
 
 export const PRIORITY_COLORS: Record<Task["priority"], string> = {
   baixa: "bg-zinc-500/20 text-zinc-400",

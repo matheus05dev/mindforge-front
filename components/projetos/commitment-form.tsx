@@ -38,8 +38,10 @@ interface CommitmentFormProps {
 }
 
 export function CommitmentForm({ onSuccess, project, milestoneId }: CommitmentFormProps) {
-  const { data: projects, loading, execute } = useApi<Project[]>()
+  const { data: projectsData, loading, execute } = useApi<any>()
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const projects: Project[] = projectsData?.content || []
 
   const {
     register,
@@ -57,13 +59,13 @@ export function CommitmentForm({ onSuccess, project, milestoneId }: CommitmentFo
   })
 
   useEffect(() => {
-    if (!projects) {
-      execute(() => projectsService.getAll())
+    if (!projectsData) {
+      execute(() => projectsService.getAll({ size: 1000 }))
     }
     if (project) {
       setValue("projectId", String(project.id))
     }
-  }, [execute, project, setValue, projects])
+  }, [execute, project, setValue, projectsData])
 
   const onSubmit = async (data: CommitmentFormData) => {
     setIsSubmitting(true)
@@ -93,7 +95,7 @@ export function CommitmentForm({ onSuccess, project, milestoneId }: CommitmentFo
     }
   }
 
-  if (loading && !projects) {
+  if (loading && !projectsData) {
     return <div className="text-center py-4 text-muted-foreground">Carregando projetos...</div>
   }
 

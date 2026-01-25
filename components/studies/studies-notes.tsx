@@ -39,14 +39,14 @@ export function StudiesNotes() {
   async function loadData() {
     try {
       setLoading(true)
-      const subjectsData = await studiesService.getAllSubjects()
-      setSubjects(subjectsData)
+      const subjectsData = await studiesService.getAllSubjects({ size: 1000 })
+      setSubjects(subjectsData.content)
 
       const allNotes: (Note & { subjectName?: string })[] = []
       
       // Buscar notas de cada matéria
       // Nota: Idealmente teríamos um endpoint /api/studies/notes para pegar todas de uma vez
-      for (const subject of subjectsData) {
+      for (const subject of subjectsData.content) {
         try {
           const subjectNotes = await studiesService.getNotesBySubject(subject.id)
           const notesWithSubject = subjectNotes.map((note: any) => ({
@@ -63,9 +63,10 @@ export function StudiesNotes() {
       allNotes.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       
       setNotes(allNotes)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao carregar dados:", error)
-      toast.error("Erro ao carregar notas.")
+      const errorMessage = error?.message || error?.toString() || "Erro ao carregar notas."
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -162,19 +163,22 @@ export function StudiesNotes() {
         <>
             {/* Lista de Notas */}
             {filteredNotes.length === 0 ? (
-                <div className="text-center py-12 rounded-lg border border-border bg-card">
-                <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <p className="text-muted-foreground mb-4">
+                <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border bg-card/50 border-dashed">
+                  <div className="bg-primary/10 p-4 rounded-full mb-4">
+                    <Sparkles className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">Comece sua jornada de conhecimento!</h3>
+                  <p className="text-muted-foreground mb-6 text-center max-w-md px-4">
                     {searchQuery || selectedTag
                     ? "Nenhuma anotação encontrada com os filtros aplicados."
-                    : "Nenhuma anotação criada ainda."}
-                </p>
-                {!searchQuery && !selectedTag && (
-                    <Button onClick={() => setIsFormOpen(true)} className="gap-2">
-                    <Plus className="h-4 w-4" />
-                    Criar Primeira Anotação
-                    </Button>
-                )}
+                    : "Ainda não há anotações. Criar notas ajuda a fixar o conteúdo e acompanhar seu progresso."}
+                  </p>
+                  {!searchQuery && !selectedTag && (
+                      <Button onClick={() => setIsFormOpen(true)} className="gap-2 text-md px-6 h-11">
+                      <Plus className="h-5 w-5" />
+                      Criar Primeira Anotação
+                      </Button>
+                  )}
                 </div>
             ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

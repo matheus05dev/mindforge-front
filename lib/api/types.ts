@@ -17,6 +17,8 @@ export interface Project {
   workspaceId?: number
   githubRepo?: string
   milestones?: Milestone[]
+  milestoneCount?: number;
+  documentCount?: number;
 }
 
 export interface Milestone {
@@ -35,6 +37,7 @@ export interface Subject {
   proficiencyLevel: "BEGINNER" | "INTERMEDIATE" | "ADVANCED"
   workspaceId?: number
   studySessions?: StudySession[]
+  sessionCount?: number;
 }
 
 export interface StudySession {
@@ -174,4 +177,27 @@ export interface DecisionRequest {
   consequences: string
   tags: string[]
   author?: string
+}
+
+export interface Page<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  last: boolean;
+  size: number;
+  number: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}
+
+export interface Pageable {
+  page?: number;
+  size?: number;
+  sort?: string[];
 }

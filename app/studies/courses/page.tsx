@@ -11,8 +11,8 @@ export default function CoursesPage() {
   
   const loadSubjects = async () => {
     try {
-      const data = await studiesService.getAllSubjects()
-      setSubjects(data)
+      const data = await studiesService.getAllSubjects({ size: 1000 })
+      setSubjects(data.content)
     } catch (error) {
        console.error(error)
     }

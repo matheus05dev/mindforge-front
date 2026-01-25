@@ -33,7 +33,8 @@ export function StudyRoadmap() {
 
         // Carregar da API
         try {
-          subjectsData = await studiesService.getAllSubjects()
+          const response = await studiesService.getAllSubjects({ size: 1000 })
+          subjectsData = response.content
           
           // Carregar sessions de todos os subjects
           for (const subject of subjectsData) {

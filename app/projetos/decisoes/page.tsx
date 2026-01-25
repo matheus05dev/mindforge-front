@@ -28,8 +28,8 @@ export default function DecisoesPage() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const data = await projectsService.getAll()
-        const adaptedProjects = data.map(p => ({
+        const data = await projectsService.getAll({ size: 1000 })
+        const adaptedProjects = data.content.map(p => ({
           id: String(p.id),
           workspaceId: String(p.workspaceId || 3),
           name: p.name,

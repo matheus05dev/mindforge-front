@@ -1,10 +1,12 @@
 import { apiClient } from "../client"
 import { API_ENDPOINTS } from "../config"
-import type { Project, Milestone } from "../types"
+import { toQueryString } from "../utils"
+import type { Project, Milestone, Page, Pageable } from "../types"
 
 export const projectsService = {
-  getAll: async (): Promise<Project[]> => {
-    return apiClient.get<Project[]>(API_ENDPOINTS.projects)
+  getAll: async (pageable?: Pageable): Promise<Page<Project>> => {
+    const qs = toQueryString(pageable as any)
+    return apiClient.get<Page<Project>>(`${API_ENDPOINTS.projects}${qs}`)
   },
 
   getById: async (id: number): Promise<Project> => {

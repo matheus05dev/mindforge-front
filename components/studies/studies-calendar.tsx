@@ -34,7 +34,8 @@ export function StudiesCalendar() {
   const daysInMonth = eachDayOfInterval({ start: calendarStart, end: calendarEnd })
 
   useEffect(() => {
-    execute(() => studiesService.getAllSubjects()).then((subjects) => {
+    execute(() => studiesService.getAllSubjects({ size: 1000 })).then((data) => {
+      const subjects = data?.content
       if (subjects) {
         const allSessions: StudySession[] = []
         subjects.forEach((subject) => {
@@ -125,7 +126,8 @@ export function StudiesCalendar() {
               <StudySessionForm
                 onSuccess={() => {
                   setIsFormOpen(false)
-                  execute(() => studiesService.getAllSubjects()).then((subjects) => {
+                  execute(() => studiesService.getAllSubjects({ size: 1000 })).then((data) => {
+                    const subjects = data?.content
                     if (subjects) {
                       const allSessions: StudySession[] = []
                       subjects.forEach((subject) => {

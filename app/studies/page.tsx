@@ -15,10 +15,16 @@ export default function StudiesPage() {
   const loadSubjects = async () => {
     try {
       setIsLoading(true)
-      const data = await studiesService.getAllSubjects()
-      setSubjects(data)
-    } catch (error) {
+      // Use workspaceId from store or default to 1
+      const workspaceId = 1 // TODO: Get from store when workspace management is implemented
+      const data = await studiesService.getAllSubjects({ size: 1000 }, workspaceId)
+      setSubjects(data.content || [])
+    } catch (error: any) {
       console.error("Erro ao carregar matérias:", error)
+      // If it's a 400 error (no workspace), just show empty state
+      if (error?.status === 400 || error?.response?.status === 400) {
+        setSubjects([])
+      }
     } finally {
       setIsLoading(false)
     }

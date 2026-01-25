@@ -53,7 +53,7 @@ export function StudySessionForm({ onSuccess, sessionId }: StudySessionFormProps
   })
 
   useEffect(() => {
-    execute(() => studiesService.getAllSubjects())
+    execute(() => studiesService.getAllSubjects({ size: 1000 }))
   }, [execute])
 
   const onSubmit = async (data: SessionFormData) => {
@@ -99,7 +99,7 @@ export function StudySessionForm({ onSuccess, sessionId }: StudySessionFormProps
             <SelectValue placeholder="Selecione um assunto" />
           </SelectTrigger>
           <SelectContent>
-            {subjects?.map((subject) => (
+            {subjects?.content?.map((subject) => (
               <SelectItem key={subject.id} value={String(subject.id)}>
                 {subject.name}
               </SelectItem>

@@ -28,6 +28,8 @@ import {
   Github,
   Target,
   FileText,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GeneralProjectStats } from "./general-stats";
@@ -53,16 +55,26 @@ export function ProjetosContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    page: 0,
+    size: 9,
+    totalPages: 0,
+    totalElements: 0,
+  });
 
   // Fetch initial data
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const data = await projectsService.getAll();
+        const data = await projectsService.getAll({
+            page: pagination.page,
+            size: pagination.size,
+            sort: ["id,desc"]
+        });
         
         // Adaptar dados da API para o formato frontend
-        const adaptedProjects = data.map(p => ({
+        const adaptedProjects = data.content.map(p => ({
             id: String(p.id),
             workspaceId: String(p.workspaceId || 3), // Default para Workspace Projetos
             name: p.name,
@@ -76,6 +88,11 @@ export function ProjetosContent() {
         }));
 
         setProjects(adaptedProjects);
+        setPagination(prev => ({
+            ...prev,
+            totalPages: data.totalPages,
+            totalElements: data.totalElements
+        }));
       } catch (error) {
         console.error("Erro ao carregar projetos:", error);
       } finally {
@@ -84,7 +101,7 @@ export function ProjetosContent() {
     };
 
     fetchProjects();
-  }, [setProjects]);
+  }, [setProjects, pagination.page, pagination.size]); // Re-fetch on page change
 
   const filteredProjects = projects.filter(
     (project) =>
@@ -102,28 +119,23 @@ export function ProjetosContent() {
   };
 
   const handleFormSuccess = () => {
-    // Recarregar dados
-    projectsService.getAll().then(data => {
-        const adaptedProjects = data.map(p => ({
-            id: String(p.id),
-            workspaceId: String(p.workspaceId || 3),
-            name: p.name,
-            description: p.description,
-            status: "ativo" as const,
-            color: "#4f46e5",
-            githubRepo: p.githubRepo,
-            milestones: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        }));
-        setProjects(adaptedProjects);
-    });
+    // Recarregar dados (reset to page 0)
+    setPagination(prev => ({ ...prev, page: 0 }));
   };
 
+  const handlePriviousPage = () => {
+      if (pagination.page > 0) {
+          setPagination(prev => ({ ...prev, page: prev.page - 1 }));
+      }
+  }
+
+  const handleNextPage = () => {
+      if (pagination.page < pagination.totalPages - 1) {
+          setPagination(prev => ({ ...prev, page: prev.page + 1 }));
+      }
+  }
+
   return (
-
-
-
     <div className="space-y-8">
       {/* Cabeçalho da Página */}
       <div className="flex items-center justify-between">
@@ -169,6 +181,7 @@ export function ProjetosContent() {
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
       ) : (
+      <>
       /* Grid de Projetos */
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredProjects.map((project) => {
@@ -316,6 +329,22 @@ export function ProjetosContent() {
           );
         })}
       </div>
+      
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-end gap-2 mt-4">
+          <Button variant="outline" size="sm" onClick={handlePriviousPage} disabled={pagination.page === 0}>
+              <ChevronLeft className="h-4 w-4" />
+              Anterior
+          </Button>
+          <span className="text-sm text-muted-foreground">
+              Página {pagination.page + 1} de {pagination.totalPages}
+          </span>
+          <Button variant="outline" size="sm" onClick={handleNextPage} disabled={pagination.page >= pagination.totalPages - 1}>
+              Próximo
+              <ChevronRight className="h-4 w-4" />
+          </Button>
+      </div>
+      </>
       )}
 
       {/* Project Form Modal */}

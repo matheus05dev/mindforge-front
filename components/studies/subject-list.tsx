@@ -69,11 +69,17 @@ export function SubjectList({ subjects, onRefresh }: SubjectListProps) {
 
       <div className="grid gap-4 md:grid-cols-2 overflow-y-auto pr-2 pb-4 flex-1 content-start">
         {subjects.length === 0 && (
-          <div className="col-span-full text-center py-12 border border-dashed rounded-lg">
-            <BookOpen className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">Nenhuma matéria cadastrada.</p>
-            <Button variant="link" onClick={handleCreate}>
-              Comece agora
+          <div className="col-span-full flex flex-col items-center justify-center py-12 border border-dashed rounded-lg bg-card/50">
+            <div className="bg-primary/10 p-4 rounded-full mb-4">
+              <BookOpen className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Comece sua jornada de aprendizado!</h3>
+            <p className="text-muted-foreground mb-6 text-center max-w-sm px-4">
+              Crie sua primeira matéria e organize seus estudos de forma eficiente.
+            </p>
+            <Button onClick={handleCreate} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Criar Primeira Matéria
             </Button>
           </div>
         )}

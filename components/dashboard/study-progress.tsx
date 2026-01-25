@@ -20,7 +20,8 @@ export function StudyProgress() {
   useEffect(() => {
     async function loadData() {
       try {
-         const subjects = await studiesService.getAllSubjects()
+         const subjectsData = await studiesService.getAllSubjects({ size: 1000 })
+         const subjects = subjectsData.content
          
          // Processar dados dos últimos 7 dias
          const last7Days = Array.from({ length: 7 }, (_, i) => {

@@ -1,10 +1,14 @@
 import { apiClient as api } from "../client"
-import type { Subject, StudySession, Note } from "../types"
+import { toQueryString } from "../utils"
+import type { Subject, StudySession, Note, Page, Pageable } from "../types"
 
 export const studiesService = {
   // Subjects
-  getAllSubjects: async () => {
-    const data = await api.get<Subject[]>("/api/studies/subjects")
+  getAllSubjects: async (pageable?: Pageable, workspaceId?: number): Promise<Page<Subject>> => {
+    const params: any = { ...pageable }
+    if (workspaceId) params.workspaceId = workspaceId
+    const qs = toQueryString(params)
+    const data = await api.get<Page<Subject>>(`/api/studies/subjects${qs}`)
     return data
   },
 
