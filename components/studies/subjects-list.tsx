@@ -39,7 +39,7 @@ export function SubjectsList() {
   const subjects: Subject[] = apiData?.content || []
 
   const loadSubjects = useCallback(() => {
-    execute(() => studiesService.getAllSubjects({ size: 1000 }))
+    execute(() => studiesService.getAllSubjects({ size: 1000 }, 1))
   }, [execute])
 
   useEffect(() => {

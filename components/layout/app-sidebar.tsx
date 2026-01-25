@@ -55,6 +55,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           { title: "Mapas Mentais", href: "/mapas-mentais", icon: Workflow },
           { title: "Projetos", href: "/projetos", icon: FolderKanban },
           { title: "Estudos", href: "/estudos", icon: GraduationCap },
+          { title: "Code Review IA", href: "/code-review", icon: Sparkles },
           { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]
       case "estudos":
@@ -64,6 +65,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           { title: "Roadmap", href: "/estudos/roadmap", icon: Map },
           { title: "Anotações", href: "/estudos/anotacoes", icon: FileText },
           { title: "Agenda de Estudos", href: "/estudos/agenda", icon: Calendar },
+          { title: "Code Review IA", href: "/code-review", icon: Sparkles },
           { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]
       case "projetos":
@@ -76,6 +78,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           { title: "Decisões (ADR)", href: "/projetos/decisoes", icon: Scale },
           { title: "Métricas", href: "/projetos/metricas", icon: BarChart },
           { title: "Agenda de Compromissos", href: "/projetos/agenda", icon: Calendar },
+          { title: "Code Review IA", href: "/code-review", icon: Sparkles },
           { title: knowledgeTitle, href: "/knowledge", icon: BookOpen },
         ]
       default:

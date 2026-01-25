@@ -29,7 +29,7 @@ export function StudiesList() {
             page: pagination.page,
             size: pagination.size,
             sort: ["id,desc"]
-        })
+        }, 1)
 
         // Map Subject to Study interface
         const proficiencyMap: Record<string, any> = {

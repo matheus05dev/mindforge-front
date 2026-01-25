@@ -15,7 +15,7 @@ export interface Project {
   description?: string
   documents?: Document[]
   workspaceId?: number
-  githubRepo?: string
+  githubRepoUrl?: string
   milestones?: Milestone[]
   milestoneCount?: number;
   documentCount?: number;
@@ -36,6 +36,7 @@ export interface Subject {
   description?: string
   proficiencyLevel: "BEGINNER" | "INTERMEDIATE" | "ADVANCED"
   workspaceId?: number
+  githubRepoUrl?: string
   studySessions?: StudySession[]
   sessionCount?: number;
 }

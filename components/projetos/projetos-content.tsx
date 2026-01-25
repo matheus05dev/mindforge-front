@@ -182,9 +182,8 @@ export function ProjetosContent() {
         </div>
       ) : (
       <>
-      /* Grid de Projetos */
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredProjects.map((project) => {
+      {/* Projects Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{filteredProjects.map((project) => {
           const stats = getProjectStats(project.id);
           const progress =
             stats.totalTasks > 0
