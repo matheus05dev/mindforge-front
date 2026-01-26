@@ -55,7 +55,7 @@ O componente central não é um simples `textarea`. É um **Editor Inteligente**
 
 ---
 
-## �️ Tech Stack & Decisões Técnicas
+## 💻 Tech Stack & Decisões Técnicas
 
 | Categoria | Tecnologia | Justificativa da Escolha |
 |-----------|------------|--------------------------|
