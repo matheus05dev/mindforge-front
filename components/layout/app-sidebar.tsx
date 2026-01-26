@@ -22,6 +22,8 @@ import {
   Map,
   Scale,
   BarChart,
+  User,
+  LogOut,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -34,6 +36,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useStore } from "@/lib/store"
+import { useAuthStore } from "@/lib/auth-store"
+import { useRouter } from "next/navigation"
 
 interface AppSidebarProps {
   collapsed: boolean
@@ -267,6 +271,7 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
             )
           })}
 
+
           {/* Toggle Sidebar */}
           <Button
             variant="ghost"
@@ -283,8 +288,60 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
               </>
             )}
           </Button>
+
+          <DropdownMenuSeparator className="my-2" />
+
+          {/* User Profile Section */}
+          <UserProfileSection collapsed={collapsed} />
         </div>
       </aside>
     </TooltipProvider>
   )
 }
+
+function UserProfileSection({ collapsed }: { collapsed: boolean }) {
+  const { user, logout } = useAuthStore() // Assuming useAuthStore handles this
+  const router = useRouter()
+
+  const handleLogout = () => {
+    logout()
+    router.push('/login')
+  }
+
+  if (!user) return null
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className={cn("flex items-center gap-2 w-full", collapsed ? "justify-center px-0" : "justify-start px-2")}>
+          <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium">
+            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+          </div>
+          {!collapsed && (
+            <div className="flex flex-col items-start truncate overflow-hidden">
+               <span className="text-sm font-medium truncate">{user.name || 'Usuário'}</span>
+               <span className="text-xs text-muted-foreground truncate max-w-[140px]">{user.email}</span>
+            </div>
+          )}
+          {!collapsed && <ChevronDown className="h-4 w-4 ml-auto text-muted-foreground" />}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuItem onClick={() => router.push('/perfil')}>
+            <User className="mr-2 h-4 w-4" />
+            <span>Perfil</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Configurações</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout} className="text-red-500 focus:text-red-500">
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Sair</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+

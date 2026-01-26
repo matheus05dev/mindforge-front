@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import { StoreProvider } from "@/lib/store";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+import AuthGuard from "@/components/auth/auth-guard";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,7 +41,9 @@ export default function RootLayout({
           themes={["light", "dark"]}
         >
           <StoreProvider>
-            {children}
+            <AuthGuard>
+              {children}
+            </AuthGuard>
             <Toaster
               position="bottom-right"
               toastOptions={{

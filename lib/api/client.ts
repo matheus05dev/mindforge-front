@@ -26,6 +26,24 @@ export class ApiClient {
       },
     }
 
+    // Explicitly handle token injection manually from localStorage to avoid loop/hook issues inside class
+    // Zustand persists to 'auth-storage' in localStorage
+    if (typeof window !== 'undefined') {
+        try {
+            const storage = localStorage.getItem('auth-storage');
+            if (storage) {
+                const parsed = JSON.parse(storage);
+                const token = parsed.state?.token;
+                if (token) {
+                    // @ts-ignore
+                    config.headers['Authorization'] = `Bearer ${token}`;
+                }
+            }
+        } catch (e) {
+            console.error("Failed to retrieve token from storage", e);
+        }
+    }
+
     try {
       const response = await fetch(url, config)
 

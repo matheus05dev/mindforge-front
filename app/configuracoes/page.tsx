@@ -9,10 +9,13 @@ import { useTheme } from "next-themes"
 import { Moon, Sun, Github } from "lucide-react"
 import { useEffect, useState } from "react"
 import { API_ENDPOINTS } from "@/lib/api/config"
+import { useAuthStore } from "@/lib/auth-store"
 
 export default function ConfiguracoesPage() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const { isAuthenticated: checkAuth } = useAuthStore()
+  const isAuthenticated = checkAuth // Since it's a property now, not a function
 
   useEffect(() => {
     setMounted(true)
@@ -78,13 +81,19 @@ export default function ConfiguracoesPage() {
                 <div>
                   <h3 className="font-medium">GitHub</h3>
                   <p className="text-sm text-muted-foreground">
-                    Conecte sua conta GitHub para análise de repositórios com IA
+                    {isAuthenticated ? "Conta conectada para análise de repositórios" : "Conecte sua conta GitHub para análise de repositórios com IA"}
                   </p>
                 </div>
               </div>
-              <Button onClick={handleGithubConnect} variant="outline">
-                Conectar
-              </Button>
+              {isAuthenticated ? (
+                <Button variant="outline" disabled className="text-green-500 border-green-500/50 bg-green-500/5">
+                  Conectado
+                </Button>
+              ) : (
+                <Button onClick={handleGithubConnect} variant="outline">
+                  Conectar
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
