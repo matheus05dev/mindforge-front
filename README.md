@@ -21,15 +21,15 @@ Construído sobre o **Next.js 14**, o frontend abstrai a complexidade da orquest
 
 ```mermaid
 graph TD
-    User((Usuário)) <-->|Interação UI/UX| NextClient[Next.js Client<br/>(App Router)]
+    User(("Usuário")) <-->|Interação UI/UX| NextClient["Next.js Client<br/>(App Router)"]
     
     subgraph "Frontend Layer"
-        NextClient <-->|State Magement| Zustand[Zustand Store]
+        NextClient <-->|State Magement| Zustand["Zustand Store"]
         NextClient -->|Data Viz| Recharts
         NextClient -->|Markdown/Diff| EditorLayers
     end
     
-    NextClient <-->|REST / Streams| BackendAPI[MindForge API]
+    NextClient <-->|REST / Streams| BackendAPI["MindForge API"]
 ```
 
 ---
