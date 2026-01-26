@@ -62,46 +62,46 @@ export function ProjetosContent() {
     totalElements: 0,
   });
 
+  // Fetch projects function
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const data = await projectsService.getAll({
+        page: pagination.page,
+        size: pagination.size,
+        sort: ["id,desc"]
+      });
+      
+      const adaptedProjects = data.content.map(p => ({
+        id: String(p.id),
+        workspaceId: String(p.workspaceId || 3),
+        name: p.name,
+        description: p.description,
+        status: "ativo" as const,
+        color: "#4f46e5",
+        githubRepo: p.githubRepoUrl,
+        milestones: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }));
+
+      setProjects(adaptedProjects);
+      setPagination(prev => ({
+        ...prev,
+        totalPages: data.totalPages,
+        totalElements: data.totalElements
+      }));
+    } catch (error) {
+      console.error("Erro ao carregar projetos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Fetch initial data
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true);
-        const data = await projectsService.getAll({
-            page: pagination.page,
-            size: pagination.size,
-            sort: ["id,desc"]
-        });
-        
-        // Adaptar dados da API para o formato frontend
-        const adaptedProjects = data.content.map(p => ({
-            id: String(p.id),
-            workspaceId: String(p.workspaceId || 3), // Default para Workspace Projetos
-            name: p.name,
-            description: p.description,
-            status: "ativo" as const, // API ainda não retorna status
-            color: "#4f46e5", // Cor padrão
-            githubRepo: p.githubRepo,
-            milestones: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        }));
-
-        setProjects(adaptedProjects);
-        setPagination(prev => ({
-            ...prev,
-            totalPages: data.totalPages,
-            totalElements: data.totalElements
-        }));
-      } catch (error) {
-        console.error("Erro ao carregar projetos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProjects();
-  }, [setProjects, pagination.page, pagination.size]); // Re-fetch on page change
+  }, [pagination.page, pagination.size]);
 
   const filteredProjects = projects.filter(
     (project) =>
@@ -118,10 +118,12 @@ export function ProjetosContent() {
     return { completedTasks, totalTasks };
   };
 
-  const handleFormSuccess = () => {
-    // Recarregar dados (reset to page 0)
-    setPagination(prev => ({ ...prev, page: 0 }));
+
+  const handleFormSuccess = async () => {
+    // Refetch projects immediately after creation
+    await fetchProjects();
   };
+
 
   const handlePriviousPage = () => {
       if (pagination.page > 0) {

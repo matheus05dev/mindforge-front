@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { studiesService } from "@/lib/api/services/studies.service"
 import type { Study } from "@/lib/types"
 
-export function StudiesList() {
+export function StudiesList({ refetchTrigger }: { refetchTrigger?: number }) {
   const [studies, setStudies] = useState<Study[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -76,7 +76,7 @@ export function StudiesList() {
       }
     }
     fetchStudies()
-  }, [pagination.page, pagination.size])
+  }, [pagination.page, pagination.size, refetchTrigger])
 
   const filteredStudies = studies.filter(
     (study) =>

@@ -10,9 +10,11 @@ import { Plus } from "lucide-react";
 
 export default function EstudosPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   const handleFormSuccess = () => {
-    // Recarregar dados se necessário
+    // Trigger refetch by incrementing counter
+    setRefetchTrigger(prev => prev + 1);
   };
 
   return (
@@ -36,7 +38,7 @@ export default function EstudosPage() {
         <StudiesOverview />
 
         {/* Studies List */}
-        <StudiesList />
+        <StudiesList refetchTrigger={refetchTrigger} />
 
         {/* Subject Form Modal */}
         <SubjectForm
