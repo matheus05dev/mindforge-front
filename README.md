@@ -1,25 +1,13 @@
 <p align="center">
-  <svg width="350" height="100" viewBox="0 0 350 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Ícone -->
-    <path d="M20 75C20 72 25 70 35 70H65C75 70 80 72 80 75V80H20V75Z" fill="#1e293b"/>
-    <path d="M35 70L30 55H70L65 70H35Z" fill="#334155"/>
-    <path d="M30 55C30 45 35 40 50 40C65 40 70 45 70 55H30Z" fill="#7c3aed"/>
-    <path d="M50 15C32 15 22 28 22 45C22 48 23 51 25 53" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/>
-    <path d="M50 15C68 15 78 28 78 45C78 48 77 51 75 53" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/>
-    <path d="M50 15V40" stroke="#7c3aed" stroke-opacity="0.6" stroke-width="5" stroke-linecap="round"/>
-    
-    <!-- Texto MindForge -->
-    <text x="100" y="62" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="42" font-weight="800" letter-spacing="-0.05em">
-      <tspan fill="#1e293b">Mind</tspan><tspan fill="#7c3aed">Forge</tspan>
-    </text>
-  </svg>
+  <img src="public/logo-full.svg" alt="MindForge Logo" width="350">
 </p>
 
 # MindForge Frontend - AI-Native Knowledge Workspace
 
 ![Status](https://img.shields.io/badge/status-active_development-blue?style=for-the-badge&logo=git)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-18.3-blue?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-cyan?style=for-the-badge&logo=tailwindcss&logoColor=white)
 
 > **A interface cognitiva do seu Segundo Cérebro. Uma experiência de usuário fluida projetada para integrar fluxos de trabalho humanos com inteligência artificial.**
@@ -76,7 +64,7 @@ O componente central não é um simples `textarea`. É um **Editor Inteligente**
 
 | Categoria | Tecnologia | Justificativa da Escolha |
 |-----------|------------|--------------------------|
-| **Core** | **Next.js 14** | App Router para routing robusto e mix de Server/Client components. |
+| **Core** | **React 18 / Next.js 14** | Base sólida para UI reativa e App Router para routing robusto. |
 | **Language** | **TypeScript** | Segurança de tipos indispensável para grandes codebases. |
 | **State** | **Zustand** | Gerenciamento de estado global minimalista, sem o boilerplate do Redux. |
 | **Styling** | **Tailwind CSS** | Velocidade de desenvolvimento e consistência de Design System. |
