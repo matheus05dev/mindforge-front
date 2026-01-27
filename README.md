@@ -1,3 +1,20 @@
+<p align="center">
+  <svg width="350" height="100" viewBox="0 0 350 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Ícone -->
+    <path d="M20 75C20 72 25 70 35 70H65C75 70 80 72 80 75V80H20V75Z" fill="#1e293b"/>
+    <path d="M35 70L30 55H70L65 70H35Z" fill="#334155"/>
+    <path d="M30 55C30 45 35 40 50 40C65 40 70 45 70 55H30Z" fill="#7c3aed"/>
+    <path d="M50 15C32 15 22 28 22 45C22 48 23 51 25 53" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/>
+    <path d="M50 15C68 15 78 28 78 45C78 48 77 51 75 53" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/>
+    <path d="M50 15V40" stroke="#7c3aed" stroke-opacity="0.6" stroke-width="5" stroke-linecap="round"/>
+    
+    <!-- Texto MindForge -->
+    <text x="100" y="62" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="42" font-weight="800" letter-spacing="-0.05em">
+      <tspan fill="#1e293b">Mind</tspan><tspan fill="#7c3aed">Forge</tspan>
+    </text>
+  </svg>
+</p>
+
 # MindForge Frontend - AI-Native Knowledge Workspace
 
 ![Status](https://img.shields.io/badge/status-active_development-blue?style=for-the-badge&logo=git)

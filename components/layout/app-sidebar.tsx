@@ -38,6 +38,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useStore } from "@/lib/store"
 import { useAuthStore } from "@/lib/auth-store"
 import { useRouter } from "next/navigation"
+import { Logo } from "@/components/ui/logo"
 
 interface AppSidebarProps {
   collapsed: boolean
@@ -106,45 +107,59 @@ export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
           collapsed ? "w-16" : "w-64",
         )}
       >
-        {/* Workspace Selector */}
-        <div className="flex h-14 items-center border-b border-border px-3">
-          {collapsed ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0">
-                  <span className="text-lg">{currentWorkspace.icon}</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">{currentWorkspace.name}</TooltipContent>
-            </Tooltip>
-          ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex h-10 w-full items-center justify-between gap-2 px-2">
-                  <div className="flex items-center gap-2">
+        {/* Logo & Workspace Selector */}
+        <div className="flex flex-col border-b border-border">
+          <div className={cn(
+            "flex h-16 items-center px-4",
+            collapsed ? "justify-center px-0" : "justify-start"
+          )}>
+            <Logo 
+              collapsed={collapsed} 
+              width={32} 
+              height={32} 
+              className={cn("transition-all duration-300", collapsed ? "w-8" : "w-auto")}
+            />
+          </div>
+          
+          <div className="px-3 pb-3">
+            {collapsed ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0">
                     <span className="text-lg">{currentWorkspace.icon}</span>
-                    <span className="font-medium">{currentWorkspace.name}</span>
-                  </div>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                {workspaces.map((workspace) => (
-                  <DropdownMenuItem
-                    key={workspace.id}
-                    onClick={() => setCurrentWorkspace(workspace)}
-                    className={cn("flex items-center gap-2", currentWorkspace.id === workspace.id && "bg-accent")}
-                  >
-                    <span>{workspace.icon}</span>
-                    <div className="flex flex-col">
-                      <span>{workspace.name}</span>
-                      <span className="text-xs text-muted-foreground">{workspace.description}</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">{currentWorkspace.name}</TooltipContent>
+              </Tooltip>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex h-10 w-full items-center justify-between gap-2 px-2 bg-accent/20 border-accent/20">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{currentWorkspace.icon}</span>
+                      <span className="font-medium truncate text-sm">{currentWorkspace.name}</span>
                     </div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                    <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  {workspaces.map((workspace) => (
+                    <DropdownMenuItem
+                      key={workspace.id}
+                      onClick={() => setCurrentWorkspace(workspace)}
+                      className={cn("flex items-center gap-2", currentWorkspace.id === workspace.id && "bg-accent")}
+                    >
+                      <span>{workspace.icon}</span>
+                      <div className="flex flex-col">
+                        <span>{workspace.name}</span>
+                        <span className="text-xs text-muted-foreground">{workspace.description}</span>
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
 
         {/* Busca Rápida */}

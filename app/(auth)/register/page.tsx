@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Loader2, Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
+import { Logo } from '@/components/ui/logo';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -66,11 +67,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <Card className="border-none shadow-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm">
-      <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-          Crie sua conta
-        </CardTitle>
+    <Card className="border-zinc-200/90 dark:border-zinc-800/50 shadow-2xl shadow-primary/10 dark:shadow-primary/20 bg-white dark:bg-zinc-950/90 backdrop-blur-xl">
+      <CardHeader className="space-y-4 text-center items-center pb-2">
+        <Logo width={50} height={50} showText={true} />
         <CardDescription>
           Comece a transformar seu aprendizado hoje
         </CardDescription>
@@ -87,8 +86,8 @@ export default function RegisterPage() {
                     <FormLabel>Nome</FormLabel>
                     <FormControl>
                         <div className="relative">
-                        <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input placeholder="João" className="pl-10" {...field} />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="João" className="pl-10 h-11" {...field} />
                         </div>
                     </FormControl>
                     <FormMessage />
@@ -102,7 +101,7 @@ export default function RegisterPage() {
                     <FormItem>
                     <FormLabel>Sobrenome</FormLabel>
                     <FormControl>
-                        <Input placeholder="Silva" {...field} />
+                        <Input placeholder="Silva" className="h-11" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -118,8 +117,8 @@ export default function RegisterPage() {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input placeholder="seu@email.com" className="pl-10" {...field} />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input placeholder="seu@email.com" className="pl-10 h-11" {...field} />
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -134,17 +133,17 @@ export default function RegisterPage() {
                   <FormLabel>Senha</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input 
                         type={showPassword ? "text" : "password"} 
                         placeholder="******" 
-                        className="pl-10 pr-10" 
+                        className="pl-10 pr-10 h-11" 
                         {...field} 
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground transition-colors"
+                        className="absolute right-3 top-3 text-muted-foreground hover:text-foreground transition-colors"
                       >
                         {showPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -158,17 +157,17 @@ export default function RegisterPage() {
                 </FormItem>
               )}
             />
-            <Button className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 transition-all duration-300" type="submit" disabled={isLoading}>
+            <Button className="w-full h-11 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 transition-all duration-300 text-white font-semibold shadow-lg shadow-blue-500/20 mt-2" type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Cadastrar
             </Button>
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex flex-col space-y-2 text-center text-sm text-muted-foreground">
+      <CardFooter className="flex flex-col space-y-2 text-center text-sm text-muted-foreground border-t border-border/40 pt-6">
         <div>
           Já tem uma conta?{' '}
-          <Link href="/login" className="text-primary hover:underline font-medium text-blue-600">
+          <Link href="/login" className="text-blue-600 hover:text-blue-700 hover:underline font-semibold transition-colors">
             Entrar
           </Link>
         </div>
