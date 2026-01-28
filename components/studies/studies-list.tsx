@@ -25,11 +25,23 @@ export function StudiesList({ refetchTrigger }: { refetchTrigger?: number }) {
     async function fetchStudies() {
       try {
         setLoading(true)
-        const data = await studiesService.getAllSubjects({
-            page: pagination.page,
-            size: pagination.size,
-            sort: ["id,desc"]
-        }, 1)
+        const [subjectsData, sessions] = await Promise.all([
+           studiesService.getAllSubjects({
+              page: pagination.page,
+              size: pagination.size,
+              sort: ["id,desc"]
+           }, 1),
+           studiesService.getAllSessions()
+        ])
+
+        // Ensure sessions is an array
+        let allSessions: any[] = [];
+        if (Array.isArray(sessions)) {
+            allSessions = sessions;
+        } else {
+            // @ts-ignore
+            if (sessions && sessions.content) allSessions = sessions.content;
+        }
 
         // Map Subject to Study interface
         const proficiencyMap: Record<string, any> = {
@@ -42,32 +54,45 @@ export function StudiesList({ refetchTrigger }: { refetchTrigger?: number }) {
             "HARD": "avancado"
         };
 
-        const mappedStudies: Study[] = data.content.map(subject => ({
-            id: String(subject.id),
-            workspaceId: String(subject.workspaceId || 1),
-            title: subject.name,
-            description: subject.description,
-            category: "General", // Placeholder
-            subject: {
-                ...subject,
-                id: String(subject.id), // Ensure string ID match
-                createdAt: new Date().toISOString(), // Mock
-                updatedAt: new Date().toISOString(),  // Mock
-                proficiencyLevel: proficiencyMap[subject.proficiencyLevel] || "iniciante"
-            },
-            progress: 0, 
-            totalHours: 0,
-            completedHours: 0,
-            status: "em_andamento",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        }))
+        const mappedStudies: Study[] = subjectsData.content.map(subject => {
+            // Filter sessions for this subject
+            // Using subjectId - ensure types match (string vs number)
+            const subjectSessions = allSessions.filter(s => String(s.subjectId) === String(subject.id));
+            
+            const totalMinutes = subjectSessions.reduce((acc, s) => acc + Number(s.durationMinutes || 0), 0);
+            const totalHours = Number((totalMinutes / 60).toFixed(1));
+
+            return {
+                id: String(subject.id),
+                workspaceId: String(subject.workspaceId || 1),
+                title: subject.name,
+                description: subject.description,
+                category: "General", 
+                subject: {
+                    ...subject,
+                    id: String(subject.id), 
+                    createdAt: new Date().toISOString(), 
+                    updatedAt: new Date().toISOString(), 
+                    proficiencyLevel: proficiencyMap[subject.proficiencyLevel] || "iniciante",
+                    studySessions: subjectSessions // Attach sessions directly if type allows, or just use for stats
+                },
+                // Add sessions to the study object if the type definition allows it, 
+                // or just rely on the stats below. StudyCard checks study.sessions?
+                sessions: subjectSessions, 
+                progress: subject.proficiencyLevel === "ADVANCED" ? 100 : subject.proficiencyLevel === "INTERMEDIATE" ? 60 : 30, // Mock progress based on level
+                totalHours: 100, // Goal (mock)
+                completedHours: totalHours,
+                status: "em_andamento",
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+        })
 
         setStudies(mappedStudies)
         setPagination(prev => ({
             ...prev,
-            totalPages: data.totalPages,
-            totalElements: data.totalElements
+            totalPages: subjectsData.totalPages,
+            totalElements: subjectsData.totalElements
         }))
       } catch (error) {
         console.error("Failed to fetch studies", error)

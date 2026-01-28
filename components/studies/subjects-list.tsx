@@ -32,15 +32,46 @@ const proficiencyColors: Record<string, string> = {
 
 export function SubjectsList() {
   const router = useRouter()
-  const { data: apiData, loading, error, execute } = useApi<any>()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<any>(null)
+  const [subjects, setSubjects] = useState<Subject[]>([])
+  
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingSubject, setEditingSubject] = useState<Subject | undefined>()
 
-  const subjects: Subject[] = apiData?.content || []
+  const loadSubjects = useCallback(async () => {
+    try {
+        setLoading(true)
+        const [subjectsData, sessions] = await Promise.all([
+           studiesService.getAllSubjects({ size: 1000 }, 1),
+           studiesService.getAllSessions()
+        ])
+        
+        // Handle potential sessions array mismatch
+        let allSessions: any[] = [];
+        if (Array.isArray(sessions)) {
+            allSessions = sessions;
+        } else {
+             // @ts-ignore
+             if (sessions && sessions.content) allSessions = sessions.content;
+        }
 
-  const loadSubjects = useCallback(() => {
-    execute(() => studiesService.getAllSubjects({ size: 1000 }, 1))
-  }, [execute])
+        const subjectsWithSessions = subjectsData.content.map(subject => {
+            const subjectSessions = allSessions.filter(s => String(s.subjectId) === String(subject.id));
+            return {
+                ...subject,
+                studySessions: subjectSessions
+            }
+        })
+        
+        setSubjects(subjectsWithSessions)
+    } catch (err) {
+        console.error("Failed to load studies", err)
+        setError(err)
+    } finally {
+        setLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     loadSubjects()
@@ -111,7 +142,7 @@ export function SubjectsList() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {subjects.map((subject) => {
         const totalMinutes = subject.studySessions?.reduce((acc, s) => acc + s.durationMinutes, 0) || 0
-        const totalHours = Math.floor(totalMinutes / 60)
+        const totalHours = Number((totalMinutes / 60).toFixed(1))
 
         return (
           <div
@@ -135,10 +166,10 @@ export function SubjectsList() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleEdit(subject)}>Editar</DropdownMenuItem>
-                    <DropdownMenuItem>Ver Sessões</DropdownMenuItem>
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEdit(subject); }}>Editar</DropdownMenuItem>
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); router.push(`/estudos/cursos/${subject.id}`); }}>Ver Detalhes</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(subject.id)}>
+                    <DropdownMenuItem className="text-destructive" onClick={(e) => { e.stopPropagation(); handleDelete(subject.id); }}>
                       Excluir
                     </DropdownMenuItem>
                   </DropdownMenuContent>

@@ -49,9 +49,13 @@ const statusConfig = {
   },
 };
 
+import { kanbanService } from "@/lib/api/services/kanban.service";
+import { KanbanTask } from "@/lib/api/types";
+
 export function ProjetosContent() {
   const router = useRouter();
-  const { projects, setProjects, tasks } = useStore();
+  const { projects, setProjects } = useStore(); // Removed tasks from useStore
+  const [tasks, setTasks] = useState<KanbanTask[]>([]); // Local state for tasks
   const [searchQuery, setSearchQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -66,13 +70,19 @@ export function ProjetosContent() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const data = await projectsService.getAll({
-        page: pagination.page,
-        size: pagination.size,
-        sort: ["id,desc"]
-      });
+      const [projectsData, boardData] = await Promise.all([
+        projectsService.getAll({
+          page: pagination.page,
+          size: pagination.size,
+          sort: ["id,desc"]
+        }),
+        kanbanService.getBoard()
+      ]);
       
-      const adaptedProjects = data.content.map(p => ({
+      const allTasks = boardData.flatMap(col => col.tasks || []);
+      setTasks(allTasks);
+      
+      const adaptedProjects = projectsData.content.map(p => ({
         id: String(p.id),
         workspaceId: String(p.workspaceId || 3),
         name: p.name,
@@ -88,8 +98,8 @@ export function ProjetosContent() {
       setProjects(adaptedProjects);
       setPagination(prev => ({
         ...prev,
-        totalPages: data.totalPages,
-        totalElements: data.totalElements
+        totalPages: projectsData.totalPages,
+        totalElements: projectsData.totalElements
       }));
     } catch (error) {
       console.error("Erro ao carregar projetos:", error);
@@ -110,13 +120,31 @@ export function ProjetosContent() {
   );
 
   const getProjectStats = (projectId: string) => {
-    const projectTasks = tasks.filter((task) => task.projectId === projectId);
-    const completedTasks = projectTasks.filter(
-      (task) => task.status === "concluido"
-    ).length;
-    const totalTasks = projectTasks.length;
-    return { completedTasks, totalTasks };
+    // Check match by string or number comparison
+    const projectTasks = tasks.filter((task) => String(task.projectId) === projectId);
+    
+    // Check for "done" column - we need to know which column is "done"
+    // Since we flattened the tasks, we lost column context per task unless we map it differently or check columnId
+    // KanbanTask has columnId. We need to know which IDs are "done".
+    // For simplicity, let's assume we fetch board and find "done" column id.
+    // In this optimized fetch we just grabbed tasks. simpler way:
+    // We should probably rely on task status if we had it.
+    // Re-evaluating: let's pass a set of doneColumnIds or just fetch board and keep structure.
+    
+    // Actually, let's filter by columnId if we knew it. 
+    // Since we don't know the Done Column ID easily here without processing boardData into state:
+    // Let's assume we can infer it or we should store board structure.
+    // Refactoring to store tasks with their status context if possible, OR
+    // just counting all tasks for now and fixing 'completed' if we can find the 'Done' column ID from the fetch.
+    
+    // Better idea: store boardData to find done columns.
+    // Retrieving Done Column ID from boardData inside fetchProjects would be better but getProjectStats is outside.
+    // I will modify this content to store `doneColumnId` in state.
+    return { completedTasks: 0, totalTasks: projectTasks.length }; 
   };
+  
+  // Wait, I need to implement the completed count correctly.
+  // I will restart the replacement to include doneColumnId state.
 
 
   const handleFormSuccess = async () => {

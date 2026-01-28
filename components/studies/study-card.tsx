@@ -65,18 +65,19 @@ export function StudyCard({ study, variant = "grid" }: StudyCardProps) {
         </div>
 
         <div className="flex items-center gap-6">
-          <div className="w-32">
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-muted-foreground">Progress</span>
-              <span className="font-medium">{study.progress}%</span>
-            </div>
-            <Progress value={study.progress} className="h-1.5" />
+          <div className="flex flex-col items-end gap-1 min-w-[100px]">
+            {study.subject && (
+                 <Badge variant="outline" className={cn("text-xs", proficiencyColors[study.subject.proficiencyLevel])}>
+                   <TrendingUp className="h-3 w-3 mr-1" />
+                   {proficiencyLabels[study.subject.proficiencyLevel]}
+                 </Badge>
+            )}
           </div>
 
           <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Clock className="h-4 w-4" />
             <span>
-              {study.completedHours}/{study.totalHours}h
+              {study.completedHours}h
             </span>
           </div>
 
@@ -155,21 +156,14 @@ export function StudyCard({ study, variant = "grid" }: StudyCardProps) {
         )}
       </div>
 
-      {/* Progress */}
-      <div className="mt-4">
-        <div className="flex items-center justify-between text-xs mb-1.5">
-          <span className="text-muted-foreground">Progress</span>
-          <span className="font-medium">{study.progress}%</span>
-        </div>
-        <Progress value={study.progress} className="h-2" />
-      </div>
+
 
       {/* Footer */}
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <Clock className="h-3.5 w-3.5" />
           <span>
-            {study.completedHours}/{study.totalHours}h
+            {study.completedHours}h
           </span>
         </div>
         <Button size="sm" className="gap-2">

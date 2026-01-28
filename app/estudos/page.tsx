@@ -35,7 +35,7 @@ export default function EstudosPage() {
         </div>
 
         {/* Overview Section */}
-        <StudiesOverview />
+        <StudiesOverview refetchTrigger={refetchTrigger} />
 
         {/* Studies List */}
         <StudiesList refetchTrigger={refetchTrigger} />

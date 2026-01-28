@@ -25,45 +25,55 @@ const priorityLabels = {
   baixa: "Baixa",
 }
 
-export function UpcomingTasks() {
-  const tasks: Task[] = []
+import { KanbanTask } from "@/lib/api/types"
+export function UpcomingTasks({ tasks = [] }: { tasks?: KanbanTask[] }) {
+  // Use tasks from props
+  
+  // Helper to determine status color based on column (heuristic)
+  const getStatusColor = (task: KanbanTask) => {
+     // Since we don't have column name here easily unless we fetch board, 
+     // we can just use a default or maybe try to guess if we had column info.
+     // For now, let's just make it neutral or based on position?
+     // Actually, let's just use a generic style.
+     return "bg-blue-500/10 text-blue-500 border-blue-500/20"
+  }
 
   return (
     <div className="rounded-lg border border-border bg-card p-6">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h3 className="font-semibold">Próximas Tarefas</h3>
-          <p className="text-sm text-muted-foreground">Tarefas que precisam de atenção</p>
+          <h3 className="font-semibold">Tarefas Recentes</h3>
+          <p className="text-sm text-muted-foreground">Suas tarefas no quadro Kanban</p>
         </div>
         <Badge variant="secondary" className="gap-1">
-          <AlertCircle className="h-3 w-3" />
-          {tasks.filter((task) => task.isOverdue).length} atrasada(s)
+          <Clock className="h-3 w-3" />
+          {tasks.length} ativa(s)
         </Badge>
       </div>
-      <div className="space-y-3">
-        {tasks.map((task) => (
+      <div className="space-y-3 max-h-[300px] overflow-y-auto">
+        {tasks.length === 0 ? (
+           <p className="text-sm text-muted-foreground text-center py-4">Nenhuma tarefa encontrada.</p>
+        ) : (
+        tasks.slice(0, 5).map((task) => (
           <div
             key={task.id}
             className={cn(
-              "flex items-start gap-3 rounded-md border p-3 transition-colors hover:bg-accent/50 cursor-pointer",
-              task.isOverdue ? "border-red-500/30 bg-red-500/5" : "border-border",
+              "flex items-start gap-3 rounded-md border p-3 transition-colors hover:bg-accent/50 cursor-pointer border-border",
             )}
           >
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{task.title}</p>
-              <p className="text-xs text-muted-foreground">{task.project}</p>
+              <p className="text-xs text-muted-foreground">{task.projectName || task.subjectName || "Sem projeto"}</p>
             </div>
             <div className="flex flex-col items-end gap-1">
-              <Badge variant="outline" className={cn("text-[10px]", priorityColors[task.priority])}>
-                {priorityLabels[task.priority]}
-              </Badge>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                {task.isOverdue ? <AlertCircle className="h-3 w-3 text-red-500" /> : <Clock className="h-3 w-3" />}
-                <span className={task.isOverdue ? "text-red-500" : ""}>{task.dueDate}</span>
-              </div>
+               {/* Since we don't have priority/date, maybe show ID or generic icon */}
+               <Badge variant="outline" className="text-[10px]">
+                 #{task.id}
+               </Badge>
             </div>
           </div>
-        ))}
+        ))
+        )}
       </div>
     </div>
   )

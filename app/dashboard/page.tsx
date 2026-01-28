@@ -9,31 +9,58 @@ import { QuickActions } from "@/components/dashboard/quick-actions"
 import { UpcomingTasks } from "@/components/dashboard/upcoming-tasks"
 import { StudyProgress } from "@/components/dashboard/study-progress"
 import { FolderKanban, CheckCircle2, Clock, BookOpen } from "lucide-react"
+import { kanbanService } from "@/lib/api/services/kanban.service"
 import { projectsService } from "@/lib/api/services/projects.service"
 import { studiesService } from "@/lib/api/services/studies.service"
+import type { KanbanTask, StudySession, KanbanColumn } from "@/lib/api/types"
 
 export default function DashboardPage() {
   const [stats, setStats] = useState({ 
     projects: 0, 
     subjects: 0,
+    tasksCompleted: 0,
+    studyHours: "0h",
     loading: true 
   })
   const [activities, setActivities] = useState<Activity[]>([])
+  const [tasks, setTasks] = useState<KanbanTask[]>([])
+  const [sessions, setSessions] = useState<StudySession[]>([])
 
   useEffect(() => {
     async function loadData() {
       try {
-        // Fetch stats (using page size 1 to get totalElements)
-        const [projectsData, subjectsData] = await Promise.all([
+        // Fetch stats (using page size 1 to get totalElements where applicable)
+        const [projectsData, subjectsData, kanbanBoard, sessionsData] = await Promise.all([
           projectsService.getAll({ size: 1, sort: ["id,desc"] }),
-          studiesService.getAllSubjects({ size: 1, sort: ["id,desc"] })
+          studiesService.getAllSubjects({ size: 1, sort: ["id,desc"] }),
+          kanbanService.getBoard(),
+          studiesService.getAllSessions()
         ])
+
+        // Process Kanban Board
+        const allTasks = kanbanBoard.flatMap((col: KanbanColumn) => col.tasks || [])
+        // Assuming the last column is "Done" or similar if we can't identify it by name
+        // Or we can look for keywords like "Done", "Concluído", "Finalizado"
+        const doneColumn = kanbanBoard.find((c: KanbanColumn) => /done|concluído|finalizado/i.test(c.name))
+        const completedCount = doneColumn ? (doneColumn.tasks?.length || 0) : 0
+        
+        // Process Sessions for Total Hours (This Week)
+        const now = new Date()
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        const recentSessions = sessionsData.filter((s: StudySession) => new Date(s.startTime) >= oneWeekAgo)
+        const totalMinutes = recentSessions.reduce((acc: number, s: StudySession) => acc + s.durationMinutes, 0)
+        const hours = (totalMinutes / 60).toFixed(1)
 
         setStats({
           projects: projectsData.totalElements,
           subjects: subjectsData.totalElements,
+          tasksCompleted: completedCount,
+          studyHours: `${hours}h`,
           loading: false
         })
+
+        setTasks(allTasks)
+        setSessions(sessionsData)
 
         // Map recent items to activity feed
         // Simulating robust feed by taking latest project and subject
@@ -46,7 +73,7 @@ export default function DashboardPage() {
              type: "project",
              title: p.name,
              description: p.description || "Novo projeto criado",
-             time: "Recente" // Backend Summary DTO doesn't have date yet, use placeholder or fetch detail? Detail is expensive.
+             time: "Recente" 
            })
         }
 
@@ -90,11 +117,11 @@ export default function DashboardPage() {
           />
           <StatsCard
             title="Tarefas Concluídas"
-            value={0} // TODO: Implement task service
+            value={stats.tasksCompleted}
             icon={CheckCircle2}
             color="green"
           />
-          <StatsCard title="Horas de Estudo" value="0h" icon={Clock} color="blue" description="Esta semana" />
+          <StatsCard title="Horas de Estudo" value={stats.studyHours} icon={Clock} color="blue" description="Últimos 7 dias" />
           <StatsCard
             title="Matérias de Estudo"
             value={stats.subjects}
@@ -107,8 +134,8 @@ export default function DashboardPage() {
         <div className="grid gap-4 lg:grid-cols-3">
           {/* Coluna Esquerda - 2 cols */}
           <div className="lg:col-span-2 space-y-4">
-            <StudyProgress />
-            <UpcomingTasks />
+            <StudyProgress sessions={sessions} />
+            <UpcomingTasks tasks={tasks} />
           </div>
 
           {/* Coluna Direita */}
