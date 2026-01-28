@@ -52,6 +52,7 @@ export default function LoginPage() {
       
       const user = { email: values.email }; 
       setAuth(token, user);
+      await useAuthStore.getState().fetchUser(); // Fetch full user profile
       
       toast.success('Login realizado com sucesso!');
       router.push('/dashboard');

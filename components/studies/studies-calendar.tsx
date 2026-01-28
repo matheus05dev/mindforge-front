@@ -34,21 +34,9 @@ export function StudiesCalendar() {
   const daysInMonth = eachDayOfInterval({ start: calendarStart, end: calendarEnd })
 
   useEffect(() => {
-    execute(() => studiesService.getAllSubjects({ size: 1000 })).then((data) => {
-      const subjects = data?.content
-      if (subjects) {
-        const allSessions: StudySession[] = []
-        subjects.forEach((subject) => {
-          if (subject.studySessions) {
-            allSessions.push(
-              ...subject.studySessions.map((session) => ({
-                ...session,
-                subjectName: subject.name,
-              }))
-            )
-          }
-        })
-        setSessions(allSessions)
+    execute(() => studiesService.getAllSessions()).then((data) => {
+      if (data) {
+        setSessions(data)
       }
     })
   }, [execute])
@@ -126,21 +114,9 @@ export function StudiesCalendar() {
               <StudySessionForm
                 onSuccess={() => {
                   setIsFormOpen(false)
-                  execute(() => studiesService.getAllSubjects({ size: 1000 })).then((data) => {
-                    const subjects = data?.content
-                    if (subjects) {
-                      const allSessions: StudySession[] = []
-                      subjects.forEach((subject) => {
-                        if (subject.studySessions) {
-                          allSessions.push(
-                            ...subject.studySessions.map((session) => ({
-                              ...session,
-                              subjectName: subject.name,
-                            }))
-                          )
-                        }
-                      })
-                      setSessions(allSessions)
+                  execute(() => studiesService.getAllSessions()).then((data) => {
+                    if (data) {
+                      setSessions(data)
                     }
                   })
                 }}

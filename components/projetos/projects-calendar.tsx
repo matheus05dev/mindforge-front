@@ -6,7 +6,7 @@ import { projectsService } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Calendar, ChevronLeft, ChevronRight, Plus, CheckCircle2, Circle, AlertCircle } from "lucide-react"
-import type { Milestone, Project } from "@/lib/api/types"
+import type { Milestone, Project, Page } from "@/lib/api/types"
 import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { cn } from "@/lib/utils"
@@ -32,7 +32,7 @@ interface CalendarEvent {
 }
 
 export function ProjectsCalendar() {
-  const { data: projects, loading, execute } = useApi<Project[]>()
+  const { data: projects, loading, execute } = useApi<Page<Project>>()
   const [milestones, setMilestones] = useState<Milestone[]>([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
@@ -86,7 +86,7 @@ export function ProjectsCalendar() {
     
     milestones.forEach((milestone) => {
       if (milestone.dueDate) {
-        const project = projects?.find((p) => p.id === milestone.projectId)
+        const project = projects?.content?.find((p) => p.id === milestone.projectId)
         eventsList.push({
           id: milestone.id,
           title: milestone.title,

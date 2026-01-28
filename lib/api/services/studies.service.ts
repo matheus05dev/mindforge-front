@@ -32,6 +32,11 @@ export const studiesService = {
   },
 
   // Sessions
+  getAllSessions: async () => {
+    const data = await api.get<StudySession[]>("/api/studies/sessions")
+    return data
+  },
+
   getSessionsBySubject: async (subjectId: number) => {
     const data = await api.get<StudySession[]>(`/api/studies/subjects/${subjectId}/sessions`)
     return data

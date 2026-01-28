@@ -11,7 +11,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [isLoading, setIsLoading] = useState(true);
 
+  const _hasHydrated = useAuthStore((state) => state._hasHydrated);
+
   useEffect(() => {
+    // Wait for hydration
+    if (!_hasHydrated) return;
+
     // List of public routes that don't satisfy the guard
     const publicRoutes = ['/login', '/register', '/'];
     
@@ -25,13 +30,13 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       router.push('/login');
     } else if (isAuthenticated && (pathname === '/login' || pathname === '/register')) {
         // If already logged in, redirect away from auth pages
-        router.push('/'); // or /estudos
+        router.push('/dashboard'); // Redirect to dashboard instead of /
     }
     
     setIsLoading(false);
-  }, [isAuthenticated, pathname, router]);
+  }, [isAuthenticated, pathname, router, _hasHydrated]);
 
-  if (isLoading) {
+  if (isLoading || !_hasHydrated) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

@@ -55,6 +55,7 @@ export default function RegisterPage() {
       
       const user = { email: values.email, name: `${values.firstname} ${values.lastname}` };
       setAuth(token, user);
+      await useAuthStore.getState().fetchUser(); // Fetch full user profile to ensure consistency
       
       toast.success('Cadastro realizado com sucesso!');
       router.push('/'); 

@@ -14,8 +14,8 @@ import { useAuthStore } from "@/lib/auth-store"
 export default function ConfiguracoesPage() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const { isAuthenticated: checkAuth } = useAuthStore()
-  const isAuthenticated = checkAuth // Since it's a property now, not a function
+  /* Existing imports */
+  const { isAuthenticated, user } = useAuthStore()
 
   useEffect(() => {
     setMounted(true)
@@ -81,11 +81,11 @@ export default function ConfiguracoesPage() {
                 <div>
                   <h3 className="font-medium">GitHub</h3>
                   <p className="text-sm text-muted-foreground">
-                    {isAuthenticated ? "Conta conectada para análise de repositórios" : "Conecte sua conta GitHub para análise de repositórios com IA"}
+                    {user?.isGithubConnected ? "Conta conectada para análise de repositórios" : "Conecte sua conta GitHub para análise de repositórios com IA"}
                   </p>
                 </div>
               </div>
-              {isAuthenticated ? (
+              {user?.isGithubConnected ? (
                 <Button variant="outline" disabled className="text-green-500 border-green-500/50 bg-green-500/5">
                   Conectado
                 </Button>
