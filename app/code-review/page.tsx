@@ -11,6 +11,7 @@ import type { Project, Subject } from "@/lib/api/types"
 import { Sparkles, FolderKanban, GraduationCap, Github, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { GitHubRepoLink } from "@/components/projects/github-repo-link"
+import { GitHubStudyLink } from "@/components/studies/github-study-link"
 
 export default function CodeReviewPage() {
   const router = useRouter()
@@ -226,10 +227,16 @@ export default function CodeReviewPage() {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <Button variant="outline" size="sm" className="w-full gap-2" disabled>
-                          <Plus className="h-4 w-4" />
-                          Vincular GitHub (Em breve)
-                        </Button>
+                        <GitHubStudyLink
+                          subjectId={subject.id}
+                          onSuccess={loadSubjects}
+                          trigger={
+                            <Button variant="outline" size="sm" className="w-full gap-2">
+                              <Plus className="h-4 w-4" />
+                              Vincular GitHub
+                            </Button>
+                          }
+                        />
                       </CardContent>
                     </Card>
                   ))}

@@ -31,6 +31,22 @@ export const studiesService = {
     await api.delete(`/api/studies/subjects/${id}`)
   },
 
+  linkRepository: async (subjectId: number, repoUrl: string) => {
+    // Fallback since /link endpoint doesn't exist: update the subject directly
+    // Needs to fetch first because backend requires 'name' field for updates
+    const currentSubject = await studiesService.getSubjectById(subjectId)
+    
+    const payload = {
+      name: currentSubject.name,
+      description: currentSubject.description,
+      proficiencyLevel: currentSubject.proficiencyLevel,
+      workspaceId: currentSubject.workspaceId,
+      githubRepoUrl: repoUrl
+    }
+    
+    return await api.put<Subject>(`/api/studies/subjects/${subjectId}`, payload)
+  },
+
   // Sessions
   getAllSessions: async () => {
     const data = await api.get<StudySession[]>("/api/studies/sessions")

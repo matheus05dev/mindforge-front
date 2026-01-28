@@ -13,6 +13,42 @@ import { kanbanService } from "@/lib/api/services/kanban.service"
 import { projectsService } from "@/lib/api/services/projects.service"
 import { studiesService } from "@/lib/api/services/studies.service"
 import type { KanbanTask, StudySession, KanbanColumn } from "@/lib/api/types"
+import { Quote } from "lucide-react"
+
+function InspirationalQuote() {
+  const [quote, setQuote] = useState({ text: "", author: "" })
+
+  const quotes = [
+    { text: "A persistência é o caminho do êxito.", author: "Charles Chaplin" },
+    { text: "O único lugar onde o sucesso vem antes do trabalho é no dicionário.", author: "Albert Einstein" },
+    { text: "Acredite em si próprio e todo o resto virá naturalmente.", author: "Elon Musk" },
+    { text: "O aprendizado é a única coisa que a mente nunca se cansa, nunca tem medo e nunca se arrepende.", author: "Leonardo da Vinci" },
+    { text: "Saber não é o bastante; precisamos aplicar. Querer não é o bastante; precisamos fazer.", author: "Bruce Lee" },
+    { text: "Codar é arte, o resto é debug.", author: "Desconhecido" },
+    { text: "A melhor maneira de prever o futuro é inventá-lo.", author: "Alan Kay" },
+    { text: "Programadores e artistas são os únicos profissionais que têm como hobby a própria profissão.", author: "Rafael Gomez" }
+  ]
+
+  useEffect(() => {
+    // Pick random on mount (F5)
+    const random = quotes[Math.floor(Math.random() * quotes.length)]
+    setQuote(random)
+  }, [])
+
+  if (!quote.text) return null
+
+  return (
+    <div className="flex flex-col items-center text-center space-y-4 p-4">
+       <div className="bg-primary/10 p-3 rounded-full">
+          <Quote className="h-6 w-6 text-primary" />
+       </div>
+       <div>
+         <p className="text-lg font-medium italic">"{quote.text}"</p>
+         <p className="text-sm text-muted-foreground mt-2">- {quote.author}</p>
+       </div>
+    </div>
+  )
+}
 
 export default function DashboardPage() {
   const [stats, setStats] = useState({ 
@@ -149,13 +185,9 @@ export default function DashboardPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <SkillsRadarChart />
           <div className="rounded-lg border border-border bg-card p-6">
-            <h3 className="font-semibold mb-4">Insights da IA</h3>
-            <div className="space-y-4">
-              <div className="rounded-md bg-muted/30 p-8 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Nenhum insight disponível no momento.
-                </p>
-              </div>
+            <h3 className="font-semibold mb-4">Frase do Dia</h3>
+            <div className="space-y-4 h-full flex items-center justify-center">
+               <InspirationalQuote />
             </div>
           </div>
         </div>

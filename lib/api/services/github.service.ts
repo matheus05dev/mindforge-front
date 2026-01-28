@@ -14,7 +14,8 @@ export interface GitHubFileTree {
 }
 
 export interface CodeReviewRequest {
-  projectId: number
+  projectId?: number
+  subjectId?: number
   filePath: string
   mode: "MENTOR" | "ANALYST" | "DEBUG_ASSISTANT" | "SOCRATIC_TUTOR"
 }

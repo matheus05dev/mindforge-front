@@ -11,19 +11,19 @@ export function QuickActions() {
       icon: FolderKanban,
       label: "Novo Projeto",
       color: "text-blue-500 bg-blue-500/10 hover:bg-blue-500/20",
-      href: "/projetos/novo",
+      href: "/projetos",
     },
     {
       icon: GraduationCap,
       label: "Iniciar Estudo",
       color: "text-amber-500 bg-amber-500/10 hover:bg-amber-500/20",
-      href: "/estudos/novo",
+      href: "/estudos",
     },
     {
       icon: FileText,
       label: "Adicionar Nota",
       color: "text-green-500 bg-green-500/10 hover:bg-green-500/20",
-      href: "/conhecimento/novo",
+      href: "/knowledge",
     },
     {
       icon: Sparkles,

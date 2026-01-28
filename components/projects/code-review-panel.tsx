@@ -12,7 +12,8 @@ import { Sparkles, Loader2, Brain, Bug, GraduationCap, MessageSquare } from "luc
 import { Badge } from "@/components/ui/badge"
 
 interface CodeReviewPanelProps {
-  projectId: number
+  projectId?: number
+  subjectId?: number
   selectedFile?: string
   onReviewComplete: (result: any) => void
 }
@@ -46,7 +47,7 @@ const ANALYSIS_MODES: Record<AnalysisMode, { label: string; description: string;
   }
 }
 
-export function CodeReviewPanel({ projectId, selectedFile, onReviewComplete }: CodeReviewPanelProps) {
+export function CodeReviewPanel({ projectId, subjectId, selectedFile, onReviewComplete }: CodeReviewPanelProps) {
   const [mode, setMode] = useState<AnalysisMode>("MENTOR")
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
@@ -59,10 +60,12 @@ export function CodeReviewPanel({ projectId, selectedFile, onReviewComplete }: C
     setIsAnalyzing(true)
     try {
       const request: CodeReviewRequest = {
-        projectId,
+        projectId: projectId!,
+        subjectId: subjectId,
         filePath: selectedFile,
         mode
       }
+
       
       const result = await githubService.analyzeFile(request)
       toast.success("Análise concluída!")

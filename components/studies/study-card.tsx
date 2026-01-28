@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Clock, Play, MoreHorizontal, BookOpen, Target, TrendingUp } from "lucide-react"
+import { useRouter } from "next/navigation"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,6 +48,7 @@ const proficiencyColors: Record<string, string> = {
 }
 
 export function StudyCard({ study, variant = "grid" }: StudyCardProps) {
+  const router = useRouter()
   if (variant === "list") {
     return (
       <div className="group flex items-center gap-4 rounded-lg border border-border bg-card p-4 hover:border-primary/30 transition-all">
@@ -81,7 +83,7 @@ export function StudyCard({ study, variant = "grid" }: StudyCardProps) {
             </span>
           </div>
 
-          <Button size="sm" className="gap-2">
+          <Button size="sm" className="gap-2" onClick={() => router.push(`/estudos/cursos/${study.id}`)}>
             <Play className="h-3.5 w-3.5" />
             Continue
           </Button>
@@ -166,7 +168,7 @@ export function StudyCard({ study, variant = "grid" }: StudyCardProps) {
             {study.completedHours}h
           </span>
         </div>
-        <Button size="sm" className="gap-2">
+        <Button size="sm" className="gap-2" onClick={() => router.push(`/estudos/cursos/${study.id}`)}>
           <Play className="h-3.5 w-3.5" />
           Continue
         </Button>
