@@ -4,7 +4,7 @@
 
 # MindForge Frontend - AI-Native Cognitive Workspace
 
-![Status](https://img.shields.io/badge/status-completed-success?style=for-the-badge&logo=checkmarx)
+![Status](https://img.shields.io/badge/status-finalizado-brightgreen?style=for-the-badge&logo=git)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)
